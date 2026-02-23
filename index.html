@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesla Cost Calculator</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+:root {
+  --c-bg: oklch(0.97 0.004 250);
+  --c-fg: oklch(0.12 0.01 250);
+  --c-card: oklch(1 0 0);
+  --c-card-fg: oklch(0.12 0.01 250);
+  --c-primary: oklch(0.52 0.14 240);
+  --c-primary-fg: oklch(1 0 0);
+  --c-secondary: oklch(0.94 0.006 250);
+  --c-secondary-fg: oklch(0.35 0.01 250);
+  --c-muted: oklch(0.94 0.006 250);
+  --c-muted-fg: oklch(0.48 0.01 250);
+  --c-destructive: oklch(0.58 0.2 18);
+  --c-destructive-fg: oklch(1 0 0);
+  --c-border: oklch(0.89 0.006 250);
+  --c-input: oklch(0.95 0.004 250);
+  --c-ring: oklch(0.52 0.14 240);
+  --c-success: oklch(0.52 0.12 180);
+  --c-success-fg: oklch(1 0 0);
+  --c-warning: oklch(0.68 0.14 75);
+  --c-warning-fg: oklch(0.12 0 0);
+  --c-sidebar: oklch(0.96 0.004 250);
+  --c-sidebar-fg: oklch(0.12 0.01 250);
+  --c-accent: oklch(0.58 0.22 18);
+  --c-glow: oklch(0.52 0.14 240 / 0.15);
+  color-scheme: light;
+}
+.dark {
+  --c-bg: oklch(0.095 0.015 250);
+  --c-fg: oklch(0.93 0.005 250);
+  --c-card: oklch(0.13 0.015 250);
+  --c-card-fg: oklch(0.93 0.005 250);
+  --c-primary: oklch(0.7 0.14 230);
+  --c-primary-fg: oklch(0.095 0.015 250);
+  --c-secondary: oklch(0.17 0.015 250);
+  --c-secondary-fg: oklch(0.85 0.005 250);
+  --c-muted: oklch(0.17 0.015 250);
+  --c-muted-fg: oklch(0.55 0.01 250);
+  --c-destructive: oklch(0.65 0.2 18);
+  --c-destructive-fg: oklch(0.95 0 0);
+  --c-border: oklch(0.22 0.015 250);
+  --c-input: oklch(0.17 0.015 250);
+  --c-ring: oklch(0.7 0.14 230);
+  --c-success: oklch(0.7 0.12 180);
+  --c-success-fg: oklch(0.095 0.015 250);
+  --c-warning: oklch(0.75 0.14 75);
+  --c-warning-fg: oklch(0.095 0 0);
+  --c-sidebar: oklch(0.11 0.015 250);
+  --c-sidebar-fg: oklch(0.93 0.005 250);
+  --c-accent: oklch(0.65 0.22 18);
+  --c-glow: oklch(0.7 0.14 230 / 0.12);
+  color-scheme: dark;
+}
+</style>
+<style type="text/tailwindcss">
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-background: var(--c-bg);
+  --color-foreground: var(--c-fg);
+  --color-card: var(--c-card);
+  --color-card-fg: var(--c-card-fg);
+  --color-primary: var(--c-primary);
+  --color-primary-fg: var(--c-primary-fg);
+  --color-secondary: var(--c-secondary);
+  --color-secondary-fg: var(--c-secondary-fg);
+  --color-muted: var(--c-muted);
+  --color-muted-fg: var(--c-muted-fg);
+  --color-destructive: var(--c-destructive);
+  --color-destructive-fg: var(--c-destructive-fg);
+  --color-border: var(--c-border);
+  --color-input: var(--c-input);
+  --color-ring: var(--c-ring);
+  --color-success: var(--c-success);
+  --color-success-fg: var(--c-success-fg);
+  --color-warning: var(--c-warning);
+  --color-warning-fg: var(--c-warning-fg);
+  --color-sidebar: var(--c-sidebar);
+  --color-sidebar-fg: var(--c-sidebar-fg);
+  --color-accent: var(--c-accent);
+}
+</style>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; margin: 0; }
+
+.sw { appearance:none; width:36px; height:20px; border-radius:9999px; background:var(--c-border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.sw::after { content:''; position:absolute; width:16px; height:16px; border-radius:50%; background:#fff; top:2px; left:2px; transition:transform .2s; }
+.sw:checked { background:var(--c-primary); }
+.sw:checked::after { transform:translateX(16px); }
+
+input[type="range"] { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:9999px; background:var(--c-secondary); outline:none; cursor:pointer; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; height:16px; width:16px; border-radius:50%; background:var(--c-primary); border:none; cursor:pointer; box-shadow:0 0 0 3px var(--c-bg), 0 0 8px var(--c-glow); }
+input[type="range"]::-moz-range-thumb { height:16px; width:16px; border-radius:50%; background:var(--c-primary); border:none; cursor:pointer; box-shadow:0 0 0 3px var(--c-bg), 0 0 8px var(--c-glow); }
+
+select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-position:right 8px center; background-repeat:no-repeat; padding-right:28px; }
+
+.amort-wrap { max-height:400px; overflow-y:auto; }
+.amort-wrap::-webkit-scrollbar { width:3px; }
+.amort-wrap::-webkit-scrollbar-track { background:transparent; }
+.amort-wrap::-webkit-scrollbar-thumb { background:var(--c-border); border-radius:9999px; }
+
+label.inp { display:flex; align-items:center; height:32px; border-radius:0.375rem; border:1px solid var(--c-border); background:var(--c-secondary); padding:0 8px; gap:4px; cursor:text; transition:border-color .15s, box-shadow .15s; }
+label.inp:focus-within { border-color:var(--c-primary); box-shadow:0 0 0 2px var(--c-glow); }
+label.inp input { background:transparent; outline:none; border:none; font-size:0.875rem; color:var(--c-fg); flex:1; min-width:0; font-family:'JetBrains Mono',monospace; }
+
+.modal-overlay { position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.6); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; padding:16px; }
+.modal-box { background:var(--c-card); border:1px solid var(--c-border); border-radius:0.75rem; max-width:540px; width:100%; max-height:85vh; overflow-y:auto; padding:24px; }
+.modal-box::-webkit-scrollbar { width:3px; }
+.modal-box::-webkit-scrollbar-thumb { background:var(--c-border); border-radius:9999px; }
+
+.crd { border:1px solid var(--c-border); transition:border-color .2s, box-shadow .2s; }
+.crd:hover { border-color:color-mix(in oklch, var(--c-primary) 30%, var(--c-border)); }
+.dark .crd { box-shadow:0 0 0 1px var(--c-border), 0 4px 24px -4px rgba(0,0,0,0.3); }
+.dark .crd:hover { box-shadow:0 0 0 1px color-mix(in oklch, var(--c-primary) 40%, var(--c-border)), 0 4px 32px -4px rgba(0,0,0,0.4); }
+:root .crd { box-shadow:0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.03); }
+:root .crd:hover { box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+
+.crd-best { border-color:color-mix(in oklch, var(--c-primary) 40%, var(--c-border)); }
+.dark .crd-best { box-shadow:0 0 0 1px color-mix(in oklch, var(--c-primary) 40%, var(--c-border)), 0 0 24px -4px var(--c-glow); }
+
+.theme-btn { appearance:none; border:none; background:none; cursor:pointer; padding:6px; border-radius:0.5rem; color:var(--c-muted-fg); transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+.theme-btn:hover { background:var(--c-secondary); color:var(--c-fg); }
+.theme-btn .ico-sun { display:none; }
+.theme-btn .ico-moon { display:block; }
+.dark .theme-btn .ico-sun { display:block; }
+.dark .theme-btn .ico-moon { display:none; }
+
+.hero-num { background:linear-gradient(135deg, var(--c-fg), var(--c-primary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+.bar-seg { position:relative; overflow:hidden; }
+.bar-seg::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%); }
+
+.tesla-t { font-weight:800; letter-spacing:0.12em; font-size:13px; }
+</style>
+</head>
+<body class="min-h-screen bg-background text-foreground">
+
+<header class="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
+  <div class="flex items-center gap-3 px-4 lg:px-6 h-14">
+    <div class="flex items-center gap-2.5">
+      <svg class="w-5 h-5 text-accent" viewBox="0 0 100 100" fill="currentColor"><path d="M50 5C35 5 22 8 10 14l5 10c10-5 22-8 35-8s25 3 35 8l5-10C78 8 65 5 50 5zm0 20c-3 0-5 0-5 0l-2 70h14l-2-70s-2 0-5 0z"/></svg>
+      <div>
+        <h1 class="tesla-t text-foreground tracking-[0.12em]">TESLA</h1>
+        <p class="text-[9px] text-muted-fg leading-none tracking-[0.08em] uppercase">Cost Calculator</p>
+      </div>
+    </div>
+    <div class="flex-1"></div>
+    <span class="text-[9px] text-muted-fg/50 tracking-wider uppercase hidden sm:block">Washington State</span>
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
+      <svg class="ico-sun size-[18px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="ico-moon size-[18px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div id="app"></div>
+
+<script>
+function toggleTheme(){
+  const d=document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme',d?'dark':'light');
+}
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',e=>{
+  if(!localStorage.getItem('theme')){document.documentElement.classList.toggle('dark',e.matches)}
+});
+
+const TESLA_MODELS={
+  model3:{name:'Model 3',wt:38,trims:{standard:{name:'RWD',price:38990},longRange:{name:'Long Range AWD',price:46990},performance:{name:'Performance',price:54990}}},
+  modelY:{name:'Model Y',wt:53,trims:{standard:{name:'RWD',price:39990},awd:{name:'AWD',price:41990},longRange:{name:'Long Range AWD',price:48990},performance:{name:'Performance',price:57490}}},
+  modelS:{name:'Model S',wt:65,trims:{awd:{name:'AWD',price:84990},plaid:{name:'Plaid',price:109990}}},
+  modelX:{name:'Model X',wt:72,trims:{awd:{name:'AWD',price:89990},plaid:{name:'Plaid',price:114990}}},
+  cybertruck:{name:'Cybertruck',wt:92,trims:{awd:{name:'AWD',price:61990},premium:{name:'Premium',price:81990},cyberbeast:{name:'Cyberbeast',price:99990}}},
+  custom:{name:'Custom',wt:53,trims:{custom:{name:'Custom',price:0}}}
+};
+
+const WA_CITIES=[
+  {name:'Seattle',rate:10.55,rta:1,zips:['98101','98102','98103','98104','98105','98107','98109','98112','98115','98116','98117','98119','98121','98122','98125','98134','98136','98144','98199']},
+  {name:'Bellevue',rate:10.3,rta:1,zips:['98004','98005','98007','98008','98009','98015']},
+  {name:'Redmond',rate:10.4,rta:1,zips:['98052','98053','98073']},
+  {name:'Kirkland',rate:10.4,rta:1,zips:['98033','98034','98083']},
+  {name:'Bothell',rate:10.3,rta:1,zips:['98011','98041']},
+  {name:'Shoreline',rate:10.5,rta:1,zips:['98133','98155','98160','98177']},
+  {name:'Lynnwood',rate:10.6,rta:1,zips:['98036','98046','98087']},
+  {name:'Edmonds',rate:10.5,rta:1,zips:['98020','98026']},
+  {name:'Mill Creek',rate:10.6,rta:1,zips:['98082','98012']},
+  {name:'Renton',rate:10.3,rta:1,zips:['98055','98056','98057','98058','98059']},
+  {name:'Kent',rate:10.4,rta:1,zips:['98031','98032','98035','98042','98064']},
+  {name:'Federal Way',rate:10.3,rta:1,zips:['98003','98023','98063','98093']},
+  {name:'Auburn',rate:10.4,rta:1,zips:['98001','98002','98071','98092']},
+  {name:'Tacoma',rate:10.3,rta:1,zips:['98401','98403','98405','98406','98408','98418']},
+  {name:'Everett',rate:9.9,rta:1,zips:['98201','98203','98204','98208','98275']},
+  {name:'Spokane',rate:9.1,rta:0,zips:['99201','99202','99203','99204','99205','99207','99208']},
+  {name:'Vancouver',rate:8.8,rta:0,zips:['98660','98661','98664','98665','98683','98684']},
+  {name:'Olympia',rate:9.8,rta:0,zips:['98501','98502','98504','98506','98507','98508']},
+  {name:'Issaquah',rate:8.9,rta:1,zips:['98027','98029','98065','98074','98075']},
+  {name:'Sammamish',rate:8.9,rta:1,zips:['98074','98075']}
+];
+
+function lookupZip(zip){if(!zip||zip.length<5)return null;const z=zip.trim().slice(0,5);for(const c of WA_CITIES){if(c.zips.includes(z))return{name:c.name,rate:c.rate,rta:c.rta}}return null}
+function filterCities(q){if(!q)return WA_CITIES;const l=q.toLowerCase();if(/^\d/.test(l))return WA_CITIES.filter(c=>c.zips.some(z=>z.startsWith(l)));return WA_CITIES.filter(c=>c.name.toLowerCase().includes(l))}
+
+const FEES={
+  dest:1390, order:250,
+  filing:12.50, titleSvc:18, regSvc:11, plates:50, plateRefl:4, tab:30,
+  evReg:150, evAdd:50, evElec:75,
+  luxRate:0.08, luxThreshold:100000
+};
+
+const state={
+  shared:{zip:'',taxRate:10.5,taxName:'',rta:1},
+  cars:[{model:'modelY',trim:'awd',price:41990,tradeIn:0,down:5000,apr:6.5,term:60}],
+  cc:{enabled:false,payment:0,apr:0,endDate:'',balance:0,tradeValue:0,maintenance:0},
+  mobileTab:0,
+  modalFor:-1
+};
+
+function calcCar(car,sh){
+  const{price,tradeIn,down,apr,term}=car;
+  const isCustom=car.model==='custom';
+  const wt=TESLA_MODELS[car.model]?.wt||53;
+  const taxable=Math.max(price-Math.max(tradeIn,0),0);
+  const tax=taxable*(sh.taxRate/100);
+  const regFees=FEES.filing+FEES.titleSvc+FEES.regSvc+FEES.plates+FEES.plateRefl+FEES.tab;
+  const evFees=FEES.evReg+FEES.evAdd+FEES.evElec;
+  const rta=sh.rta?Math.round(price*0.011):0;
+  const luxTax=price>FEES.luxThreshold?Math.round((price-FEES.luxThreshold)*FEES.luxRate):0;
+  const gov=regFees+evFees+wt+rta+luxTax;
+  const financed=Math.max(price-tradeIn+tax+gov-down,0);
+  let monthly=0,totalInt=0,totalPaid=0;const sched=[];
+  if(apr===0||financed===0){monthly=term>0?financed/term:0;totalPaid=financed;let b=financed;for(let i=1;i<=term;i++){b-=monthly;sched.push({n:i,pmt:monthly,p:monthly,i:0,b:Math.max(b,0)})}}
+  else{const r=apr/100/12;monthly=financed*(r*Math.pow(1+r,term))/(Math.pow(1+r,term)-1);totalPaid=monthly*term;totalInt=totalPaid-financed;let b=financed;for(let i=1;i<=term;i++){const ip=b*r,pp=monthly-ip;b-=pp;sched.push({n:i,pmt:monthly,p:pp,i:ip,b:Math.max(b,0)})}}
+  return{price,tradeIn,down,taxRate:sh.taxRate,tax,regFees,evFees,weightFee:wt,rta,luxTax,gov,financed,monthly,totalPaid,totalInt,sched,isCustom,apr,term};
+}
+
+function monthsUntil(d){
+  if(!d)return 0;
+  const p=d.split('-');
+  const ey=parseInt(p[0]),em=parseInt(p[1])-1,n=new Date();
+  return Math.max((ey-n.getFullYear())*12+(em-n.getMonth()),0);
+}
+
+function calcTrade(cc,r){
+  if(!cc.enabled)return null;
+  const months=monthsUntil(cc.endDate),equity=cc.tradeValue-cc.balance,mDiff=r.monthly-cc.payment;
+  const netCost=r.totalPaid+r.down-(equity>0?equity:0),keepCost=cc.payment*months+(cc.maintenance/12)*60;
+  const verdict=keepCost>0&&netCost>0?(netCost<=keepCost?'switch':'keep'):null;
+  const projection=[];let peakEquity=equity,peakMonth=0,flipMonth=-1;const mr=cc.apr>0?cc.apr/100/12:0;let bal=cc.balance;
+  for(let m=0;m<=24;m++){const carVal=cc.tradeValue*Math.pow(0.99,m),eq=carVal-bal;projection.push({m,bal:Math.round(bal),val:Math.round(carVal),eq:Math.round(eq)});if(eq>peakEquity){peakEquity=eq;peakMonth=m}if(flipMonth<0&&equity<0&&eq>=0)flipMonth=m;if(bal>0&&m<months)bal=Math.max(bal-(cc.payment-bal*mr),0);else if(m>=months)bal=0}
+  const timing=[],ins=[];
+  if(cc.balance>0&&cc.tradeValue>0){if(equity<0&&flipMonth>0)timing.push(`Equity turns positive in ${flipMonth}mo`);if(peakMonth>0&&equity>=0)timing.push(`Peak at ${peakMonth>=24?'24mo+':peakMonth+'mo'}, Equity $${fI(Math.round(peakEquity))}`);if(months>0&&months<=12){const le=projection.find(p=>p.m===months);if(le)timing.push(`Loan payoff at ${months}mo, Equity $${fI(le.eq)}`)}if(months===0&&cc.endDate)timing.push('Fully paid off! Best time to trade')}
+  if(verdict==='keep')ins.push(`Keep saves $${fI(Math.abs(netCost-keepCost))} over 5yr`);else if(verdict==='switch')ins.push(`Switch saves $${fI(keepCost-netCost)} over 5yr`);
+  if(equity<0)ins.push(`Underwater $${fI(Math.abs(equity))}`);else if(equity>0)ins.push(`Equity $${fI(equity)} available`);
+  if(mDiff<0)ins.push('New car payment is actually lower!');
+  return{equity,mDiff,netCost,months,keepCost,switchCost:netCost,verdict,ins,timing,projection,peakMonth,peakEquity};
+}
+
+function f2(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fI(n){return Math.round(n).toLocaleString('en-US')}
+function fC(n){return'$'+fI(n)}
+function pN(v){return parseFloat(String(v).replace(/,/g,''))||0}
+
+const ICO={
+  map:'<svg class="size-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+  car:'<svg class="size-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 17m-2 0a2 2 0 104 0 2 2 0 10-4 0"/><path d="M17 17m-2 0a2 2 0 104 0 2 2 0 10-4 0"/><path d="M5 17H3v-6l2-5h9l4 5h1a2 2 0 012 2v4h-2m-4 0H9"/></svg>',
+  trophy:'<svg class="size-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>',
+  x:'<svg class="size-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+  plus:'<svg class="size-6 text-muted-fg/30 group-hover:text-primary/50 transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  up:'<svg class="size-3.5 text-success shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/></svg>',
+  down:'<svg class="size-3.5 text-destructive shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M23 18l-9.5-9.5-5 5L1 6"/></svg>',
+  clock:'<svg class="size-3.5 text-warning shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+  detail:'<svg class="size-3.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>'
+};
+
+function renderCCFields(cc){
+  const f=(label,pre,suf,val,key)=>`<div>
+    <span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">${label}</span>
+    <label class="inp">${pre?`<span class="text-xs text-muted-fg">${pre}</span>`:''}<input type="text" value="${val}" data-cc="${key}">${suf?`<span class="text-xs text-muted-fg">${suf}</span>`:''}</label></div>`;
+  return f('Monthly Payment','$','',fI(cc.payment||0),'payment')
+    +f('APR','','%',cc.apr!=null?cc.apr:'0','apr')
+    +`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Loan End</span>
+      <input type="month" class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-sm text-foreground outline-none font-mono focus:border-primary transition-colors" value="${cc.endDate}" data-cc="endDate"></div>`
+    +f('Balance','$','',fI(cc.balance||0),'balance')
+    +f('Trade Value','$','',fI(cc.tradeValue||0),'tradeValue')
+    +f('Maintenance/yr','$','',fI(cc.maintenance||0),'maintenance');
+}
+
+let rendering=false,dragging=false;
+function render(){
+  if(rendering||dragging)return;
+  rendering=true;
+  if(rT){cancelAnimationFrame(rT);rT=null}
+  const ae=document.activeElement;let fSel=null,fCur=null,fVal=null;
+  if(ae&&ae.tagName==='INPUT'&&ae.type!=='range'&&ae.type!=='checkbox'){
+    const attrs=Array.from(ae.attributes).filter(a=>a.name.startsWith('data-'));
+    if(attrs.length){fSel=attrs.map(a=>`[${a.name}="${a.value}"]`).join('');try{fCur=ae.selectionStart}catch(e){fCur=null}fVal=ae.value}}
+
+  const app=document.getElementById('app');
+  const ccOn=state.cc.enabled,cc=state.cc;
+  const ccEquity=cc.tradeValue-cc.balance;
+  const res=state.cars.map(c=>{const eff=ccOn?{...c,tradeIn:ccEquity}:c;return calcCar(eff,state.shared)});
+  const tra=res.map(r=>calcTrade(state.cc,r));
+
+  let wM=-1,wT=-1;
+  if(state.cars.length>1){let mM=Infinity,mT=Infinity;res.forEach((r,i)=>{if(r.monthly<mM){mM=r.monthly;wM=i}});res.forEach((r,i)=>{if((r.totalPaid+r.down)<mT){mT=r.totalPaid+r.down;wT=i}})}
+
+  const isMobile=window.innerWidth<=768;
+  const useSidebar=window.innerWidth>=1024;
+  const filtered=filterCities(state.shared.zip);
+  const hasMatch=state.shared.taxName;
+  const zip5=state.shared.zip.length===5&&/^\d{5}$/.test(state.shared.zip);
+  const isNonWA=zip5&&!hasMatch&&!(state.shared.zip.startsWith('98')||state.shared.zip.startsWith('99'));
+  let h='';
+
+  h+=`<div class="flex flex-col lg:flex-row">`;
+
+  // DESKTOP SIDEBAR
+  if(useSidebar){
+    h+=`<aside class="hidden lg:block lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto border-r border-border bg-sidebar p-4 w-[230px] shrink-0">
+      <div class="flex flex-col gap-5">
+        <section>
+          <div class="flex items-center gap-2 mb-3">${ICO.map}<h2 class="text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-fg">Location</h2></div>
+          <div class="flex flex-col gap-3">
+            <div>
+              <span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">ZIP Code</span>
+              <input type="text" class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-sm text-foreground outline-none focus:border-primary transition-colors" placeholder="ZIP or city" value="${state.shared.zip}" data-zip maxlength="5">
+              ${hasMatch?`<p class="text-[10px] text-primary mt-1.5 font-medium">${state.shared.taxName}</p>`:''}
+              ${isNonWA?`<p class="text-[10px] text-warning/80 mt-1.5">Not a WA ZIP — tax rate may differ</p>`:''}
+            </div>
+            <div>
+              <span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Tax Rate</span>
+              <label class="inp"><input type="text" class="text-right" value="${state.shared.taxRate}" data-shared="taxRate"><span class="text-xs text-muted-fg">%</span></label>
+            </div>
+            ${state.shared.zip&&!hasMatch?`<div class="flex flex-wrap gap-1">${filtered.slice(0,8).map(c=>`<button class="px-2 py-0.5 rounded-md text-[10px] text-muted-fg hover:text-foreground hover:bg-secondary/80 transition-colors cursor-pointer" data-city="${c.rate}" data-cityname="${c.name}" data-cityrta="${c.rta||0}">${c.name} <span class="text-warning font-mono">${c.rate}%</span></button>`).join('')}</div>`:''}
+          </div>
+        </section>
+        <div class="h-px bg-border"></div>
+        <section>
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">${ICO.car}<h2 class="text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-fg">Current Car</h2></div>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <span class="text-[9px] text-muted-fg uppercase tracking-wider">Trade-In</span>
+              <input type="checkbox" class="sw" ${ccOn?'checked':''} data-cctoggle>
+            </label>
+          </div>
+          ${ccOn&&ccEquity!==0?`<div class="mb-3 rounded-lg bg-secondary/60 p-2.5"><div class="flex items-center justify-between"><span class="text-[10px] text-muted-fg uppercase tracking-wider">Equity</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${ccEquity>=0?'bg-success text-success-fg':'bg-destructive text-destructive-fg'}">${ccEquity>=0?'+':'-'}${fC(Math.abs(ccEquity))}</span></div><p class="text-[10px] text-muted-fg mt-1">${ccEquity>=0?'Positive equity — good for trade-in':'Negative equity — you owe more than value'}</p></div>`:''}
+          <div class="flex flex-col gap-3">${renderCCFields(cc)}</div>
+        </section>
+      </div>
+    </aside>`;
+  }
+
+  // MOBILE SETTINGS BAR
+  if(!useSidebar){
+    h+=`<div class="lg:hidden border-b border-border bg-sidebar p-3">
+      <div class="flex items-center gap-3 overflow-x-auto">
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-[9px] uppercase tracking-wider text-muted-fg">ZIP</span>
+          <input type="text" class="h-7 w-20 rounded-md border border-border bg-secondary px-2 text-xs text-foreground outline-none focus:border-primary transition-colors" value="${state.shared.zip}" data-zip maxlength="5">
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <span class="text-[9px] uppercase tracking-wider text-muted-fg">Tax</span>
+          <input type="text" class="h-7 w-14 rounded-md border border-border bg-secondary px-2 text-xs text-foreground outline-none text-right font-mono focus:border-primary transition-colors" value="${state.shared.taxRate}" data-shared="taxRate">
+          <span class="text-xs text-muted-fg">%</span>
+        </div>
+        ${hasMatch?`<span class="text-[10px] text-primary shrink-0 font-medium">${state.shared.taxName}</span>`:''}
+        ${isNonWA?`<span class="text-[9px] text-warning/80 shrink-0">Not WA</span>`:''}
+        <div class="shrink-0 flex items-center gap-1.5 ml-auto">
+          <span class="text-[9px] uppercase tracking-wider text-muted-fg">Trade-In</span>
+          <input type="checkbox" class="sw" ${ccOn?'checked':''} data-cctoggle>
+        </div>
+      </div>
+      ${state.shared.zip&&!hasMatch?`<div class="flex flex-wrap gap-1 mt-2">${filtered.slice(0,8).map(c=>`<button class="px-2 py-0.5 rounded-md text-[10px] text-muted-fg hover:text-foreground hover:bg-secondary/80 transition-colors cursor-pointer" data-city="${c.rate}" data-cityname="${c.name}" data-cityrta="${c.rta||0}">${c.name} <span class="text-warning font-mono">${c.rate}%</span></button>`).join('')}</div>`:''}
+      ${ccOn?`<div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3 pt-3 border-t border-border">${renderCCFields(cc)}</div>`:''}
+    </div>`;
+  }
+
+  // MAIN CONTENT
+  h+=`<main class="flex-1 p-4 lg:p-6 min-w-0">`;
+
+  if(isMobile&&state.cars.length>1){
+    h+=`<div class="flex items-center gap-2 mb-4">
+      <div class="flex flex-1 rounded-lg bg-secondary p-1 gap-1">
+        ${state.cars.map((c,i)=>{
+          const active=state.mobileTab===i;const mn=TESLA_MODELS[c.model]?.name||'Custom';
+          return`<button class="flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${active?'bg-card text-foreground shadow-sm':'text-muted-fg hover:text-foreground'}" data-mtab="${i}">${mn}${i===wM&&state.cars.length>1?' <span class="inline-block size-1.5 rounded-full bg-primary"></span>':''}</button>`;
+        }).join('')}
+      </div>
+      ${state.cars.length<3?`<button class="size-9 rounded-lg border border-dashed border-border hover:border-primary/40 flex items-center justify-center shrink-0 transition-colors cursor-pointer" data-madd><svg class="size-4 text-muted-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`:''}
+    </div>`;
+  }
+
+  h+=`<div class="${isMobile?'flex flex-col gap-4':'flex gap-5 items-start'}">`;
+
+  state.cars.forEach((car,i)=>{
+    const r=res[i],t=tra[i];
+    const hidden=isMobile&&state.cars.length>1&&state.mobileTab!==i;
+    const isBestM=wM===i,isBestT=wT===i;
+    const tiVal=ccOn?ccEquity:car.tradeIn;
+    const mn=TESLA_MODELS[car.model]?.name||'Custom';
+
+    h+=`<div class="rounded-xl bg-card crd ${isBestM?'crd-best':''} overflow-hidden flex-1 min-w-0 ${isMobile?'':'min-w-[280px] max-w-[420px]'} relative ${hidden?'hidden':''}" data-ci="${i}">`;
+
+    if(isBestM) h+=`<div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>`;
+
+    h+=`<div class="flex items-center justify-between px-5 pt-5 pb-2">
+      <div class="flex items-center gap-2.5">
+        <h3 class="text-xs font-semibold uppercase tracking-[0.08em]">${mn}</h3>
+        ${isBestM&&state.cars.length>1?`<span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">${ICO.trophy}Best</span>`:''}
+      </div>
+      ${state.cars.length>1?`<button class="size-7 flex items-center justify-center rounded-md text-muted-fg hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer" data-rm="${i}">${ICO.x}</button>`:''}
+    </div>`;
+
+    // Hero
+    h+=`<div class="px-5 pb-5 text-center">
+      <p class="text-4xl font-bold tracking-tight font-mono hero-num">${fC(r.monthly)}</p>
+      <p class="text-[10px] text-muted-fg mt-1.5 uppercase tracking-[0.15em]">per month</p>
+    </div>`;
+
+    // Quick stats
+    h+=`<div class="grid grid-cols-3 border-t border-border/60">
+      <div class="px-3 py-3 text-center border-r border-border/60">
+        <p class="text-[9px] uppercase tracking-[0.1em] text-muted-fg mb-1">Total</p>
+        <p class="text-sm font-semibold font-mono ${isBestT&&state.cars.length>1?'text-success':''}">${fC(r.totalPaid+r.down)}</p>
+      </div>
+      <div class="px-3 py-3 text-center border-r border-border/60">
+        <p class="text-[9px] uppercase tracking-[0.1em] text-muted-fg mb-1">Financed</p>
+        <p class="text-sm font-semibold font-mono">${fC(r.financed)}</p>
+      </div>
+      <div class="px-3 py-3 text-center">
+        <p class="text-[9px] uppercase tracking-[0.1em] text-destructive/70 mb-1">Interest</p>
+        <p class="text-sm font-semibold font-mono text-destructive">${fC(r.totalInt)}</p>
+      </div>
+    </div>`;
+
+    // Cost bar
+    const netVehicle=Math.max(r.financed-r.tax-r.gov,0);
+    const bT=netVehicle+r.totalInt+r.tax+r.gov;
+    if(bT>0){
+      const pP=(netVehicle/bT*100).toFixed(1),iP=(r.totalInt/bT*100).toFixed(1),tP=(r.tax/bT*100).toFixed(1),fP=(r.gov/bT*100).toFixed(1);
+      h+=`<div class="px-5 pt-4">
+        <div class="flex h-2 w-full overflow-hidden rounded-full bg-secondary">
+          <div class="bar-seg bg-primary transition-all duration-500 rounded-l-full" style="width:${pP}%"></div>
+          ${r.totalInt>0?`<div class="bar-seg bg-destructive transition-all duration-500" style="width:${iP}%"></div>`:''}
+          ${r.tax>0?`<div class="bar-seg bg-warning transition-all duration-500" style="width:${tP}%"></div>`:''}
+          ${r.gov>0?`<div class="bar-seg bg-muted-fg/30 transition-all duration-500 rounded-r-full" style="width:${fP}%"></div>`:''}
+        </div>
+        <div class="flex items-center gap-3 flex-wrap mt-2">
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-primary"></div><span class="text-[10px] text-muted-fg">Principal</span></div>
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-destructive"></div><span class="text-[10px] text-muted-fg">Interest ${fC(r.totalInt)}</span></div>
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-warning"></div><span class="text-[10px] text-muted-fg">Tax ${fC(r.tax)}</span></div>
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-muted-fg/30"></div><span class="text-[10px] text-muted-fg">Fees ${fC(r.gov)}</span></div>
+        </div>
+      </div>`;
+    }
+
+    // Model + Trim
+    h+=`<div class="px-5 pt-4"><div class="grid grid-cols-2 gap-2">
+      <div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Model</span>
+        <select class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-xs text-foreground outline-none cursor-pointer focus:border-primary transition-colors" data-model="${i}">${Object.entries(TESLA_MODELS).map(([k,v])=>`<option value="${k}" ${car.model===k?'selected':''}>${v.name}</option>`).join('')}</select>
+      </div>
+      <div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Trim</span>
+        <select class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-xs text-foreground outline-none cursor-pointer focus:border-primary transition-colors" data-trim="${i}">${Object.entries(TESLA_MODELS[car.model].trims).map(([k,v])=>`<option value="${k}" ${car.trim===k?'selected':''}>${v.name}</option>`).join('')}</select>
+      </div>
+    </div></div>`;
+
+    // Finance
+    h+=`<div class="px-5 pt-3 pb-5 flex flex-col gap-3">`;
+
+    h+=`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Vehicle Price</span>
+      <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" class="text-right font-semibold" value="${fI(car.price)}" data-price="${i}"></label></div>`;
+
+    h+=`<div class="grid grid-cols-2 gap-2">
+      <div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Down Payment</span>
+        <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" value="${car.down?fI(car.down):'0'}" data-dp="${i}"></label></div>
+      ${!ccOn?`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Trade-In</span>
+        <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" value="${car.tradeIn?fI(car.tradeIn):'0'}" data-ti="${i}"></label></div>`
+      :`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Equity</span>
+        <div class="h-8 flex items-center"><span class="text-sm font-semibold font-mono ${tiVal>=0?'text-success':'text-destructive'}">${tiVal>=0?'+':'-'}${fC(Math.abs(tiVal))}</span></div></div>`}
+    </div>`;
+
+    h+=`<div>
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-[10px] text-muted-fg uppercase tracking-wider">APR</span>
+        <span class="text-xs font-mono text-primary font-medium">${car.apr}%</span>
+      </div>
+      <input type="range" min="0" max="15" step="0.25" value="${car.apr}" data-apr="${i}">
+    </div>`;
+
+    h+=`<div>
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-[10px] text-muted-fg uppercase tracking-wider">Loan Term</span>
+        <span class="text-xs font-mono text-primary font-medium">${car.term} mo</span>
+      </div>
+      <input type="range" min="36" max="84" step="12" value="${car.term}" data-term="${i}">
+    </div>`;
+
+    h+=`</div>`;
+
+    h+=`<button class="w-full flex items-center justify-center gap-2 py-3 border-t border-border/60 text-[10px] uppercase tracking-[0.1em] text-muted-fg hover:text-foreground hover:bg-secondary/30 transition-colors cursor-pointer" data-modal="${i}">
+      ${ICO.detail} Detailed Breakdown
+    </button>`;
+
+    h+=`</div>`;
+  });
+
+  // Add vehicle
+  if(!isMobile&&state.cars.length<3){
+    h+=`<button class="flex-1 min-w-0 min-h-[280px] rounded-xl border border-dashed border-border hover:border-primary/30 bg-transparent hover:bg-primary/5 flex flex-col items-center justify-center gap-3 transition-all group cursor-pointer min-w-[200px] max-w-[280px]" data-add>
+      <div class="size-12 rounded-full border border-dashed border-muted-fg/20 group-hover:border-primary/40 flex items-center justify-center transition-colors">${ICO.plus}</div>
+      <div class="text-center">
+        <p class="text-xs font-medium text-muted-fg group-hover:text-foreground transition-colors">Add Vehicle</p>
+        <p class="text-[9px] text-muted-fg/40 mt-1 uppercase tracking-wider">Compare up to 3</p>
+      </div>
+    </button>`;
+  }
+
+  h+=`</div>`;
+
+  if(isMobile&&state.cars.length<3&&state.cars.length<=1){
+    h+=`<button class="w-full mt-3 py-2.5 rounded-lg border border-dashed border-border text-[10px] uppercase tracking-[0.1em] text-muted-fg hover:border-primary/40 hover:text-foreground transition-colors cursor-pointer" data-madd>+ Add Vehicle</button>`;
+  }
+
+  h+=`</main></div>`;
+
+  // MODAL
+  if(state.modalFor>=0&&state.modalFor<state.cars.length){
+    const mi=state.modalFor,car=state.cars[mi],r=res[mi],t=tra[mi];
+    const mn=TESLA_MODELS[car.model]?.name||'Custom';
+    h+=`<div class="modal-overlay" data-modalclose>
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-sm font-semibold uppercase tracking-wider">${mn} — Breakdown</h3>
+          <button class="size-8 flex items-center justify-center rounded-md text-muted-fg hover:text-foreground hover:bg-secondary transition-colors cursor-pointer" data-modalclose>${ICO.x}</button>
+        </div>
+        ${renderBD(r)}
+        <div class="h-px bg-border my-5"></div>
+        <h4 class="text-[10px] font-semibold mb-3 uppercase tracking-[0.1em] text-muted-fg">Amortization Schedule</h4>
+        ${renderSched(r.sched)}
+        ${t?`<div class="h-px bg-border my-5"></div>${renderTA(t)}`:''}
+      </div>
+    </div>`;
+  }
+
+  app.innerHTML=h;
+
+  if(fSel){const el=app.querySelector(fSel);if(el){if(fVal!==null)el.value=fVal;el.focus();if(fCur!==null)try{el.setSelectionRange(fCur,fCur)}catch(e){}}}
+  rendering=false;
+}
+
+function renderBD(r){
+  const rows=[
+    {l:'Vehicle Price',v:fC(r.price),sub:'Includes $1,390 dest + $250 order'},
+    {l:`Sales Tax (${r.taxRate}%)`,v:fC(r.tax),c:'text-warning'},
+    {l:'Registration & Title',v:fC(r.regFees),c:'text-muted-fg'},
+    {l:'EV Fees',v:fC(r.evFees),c:'text-muted-fg',sub:'$150 EV Reg + $50 Add + $75 Elec'},
+    {l:'Weight Fee',v:fC(r.weightFee),c:'text-muted-fg'},
+    ...(r.rta>0?[{l:'RTA Tax (1.1%)',v:fC(r.rta),c:'text-warning',sub:'Sound Transit MVET'}]:[]),
+    ...(r.luxTax>0?[{l:'Luxury Tax (8%)',v:fC(r.luxTax),c:'text-destructive',sub:'Over $100K surcharge'}]:[]),
+    ...(r.down>0?[{l:'Down Payment',v:'-'+fC(r.down),c:'text-primary'}]:[]),
+    ...(r.tradeIn>0?[{l:'Trade-In Credit',v:'-'+fC(r.tradeIn),c:'text-primary'}]:[]),
+    ...(r.tradeIn<0?[{l:'Underwater',v:'+'+fC(Math.abs(r.tradeIn)),c:'text-destructive'}]:[]),
+    {l:'Amount Financed',v:fC(r.financed)},
+    {l:'Total Interest',v:fC(r.totalInt),c:'text-destructive'},
+    {l:'Total Cost',v:fC(r.totalPaid+r.down),c:'font-semibold',total:1}
+  ];
+  let h='<div><h4 class="text-[10px] font-semibold mb-3 uppercase tracking-[0.1em] text-muted-fg">Itemized Cost</h4><div class="flex flex-col gap-1.5">';
+  rows.forEach(r=>{h+=`<div class="flex flex-col ${r.total?'border-t border-border pt-2 mt-1':''}"><div class="flex items-center justify-between text-xs"><span class="text-muted-fg">${r.l}</span><span class="font-mono ${r.c||''}">${r.v}</span></div>${r.sub?`<p class="text-[9px] text-muted-fg/60 mt-0.5">${r.sub}</p>`:''}</div>`});
+  h+=`</div><div class="mt-3 pt-3 border-t border-border/50"><div class="flex justify-between text-[10px] text-muted-fg"><span>Gov Fees Total</span><span class="font-mono">${fC(r.gov)}</span></div></div></div>`;
+  return h;
+}
+
+function renderSched(sched){
+  if(!sched.length)return'';
+  let h=`<div class="rounded-lg border border-border overflow-hidden"><div class="amort-wrap"><table class="w-full text-xs">
+    <thead><tr class="bg-secondary/50">
+      <th class="text-left text-muted-fg font-medium px-3 py-2 text-[10px] uppercase tracking-wider">Mo</th>
+      <th class="text-right text-muted-fg font-medium px-3 py-2 text-[10px] uppercase tracking-wider">Pmt</th>
+      <th class="text-right text-muted-fg font-medium px-3 py-2 text-[10px] uppercase tracking-wider">Princ</th>
+      <th class="text-right text-muted-fg font-medium px-3 py-2 text-[10px] uppercase tracking-wider">Int</th>
+      <th class="text-right text-muted-fg font-medium px-3 py-2 text-[10px] uppercase tracking-wider">Bal</th>
+    </tr></thead><tbody>`;
+  sched.forEach(s=>{h+=`<tr class="border-t border-border/50 hover:bg-secondary/30"><td class="px-3 py-1.5 font-mono text-muted-fg">${s.n}</td><td class="px-3 py-1.5 font-mono text-right">$${f2(s.pmt)}</td><td class="px-3 py-1.5 font-mono text-right text-primary">$${f2(s.p)}</td><td class="px-3 py-1.5 font-mono text-right text-destructive">$${f2(s.i)}</td><td class="px-3 py-1.5 font-mono text-right text-muted-fg">$${f2(s.b)}</td></tr>`});
+  return h+'</tbody></table></div></div>';
+}
+
+function renderTA(t){
+  const isS=t.verdict==='switch';
+  let h=`<div class="flex flex-col gap-4 rounded-lg bg-secondary/40 p-4">
+    <div class="flex items-center justify-between">
+      <h4 class="text-xs font-semibold uppercase tracking-wider">Trade-In Analysis</h4>
+      ${t.verdict?`<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${isS?'bg-success text-success-fg':'bg-destructive text-destructive-fg'}">${isS?'Switch':'Keep'}</span>`:''}
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-lg bg-card/50 p-3">
+        <p class="text-[9px] uppercase tracking-[0.1em] text-muted-fg mb-1">Keep Current</p>
+        <p class="text-sm font-semibold font-mono">${fC(state.cc.payment)}<span class="text-muted-fg font-normal text-xs">/mo</span></p>
+        ${state.cc.maintenance>0?`<p class="text-[10px] text-muted-fg mt-0.5">+ ${fC(Math.round(state.cc.maintenance/12))}/mo maint.</p>`:''}
+      </div>
+      <div class="rounded-lg bg-card/50 p-3">
+        <p class="text-[9px] uppercase tracking-[0.1em] text-muted-fg mb-1">Switch to Tesla</p>
+        <p class="text-sm font-semibold font-mono text-primary">${fC(Math.round(t.mDiff+state.cc.payment>0?t.mDiff+state.cc.payment:0))}<span class="text-muted-fg font-normal text-xs">/mo</span></p>
+        <p class="text-[10px] ${t.mDiff<=0?'text-success':'text-destructive'} mt-0.5">${t.mDiff<=0?'Save':'Costs'} ${fC(Math.abs(Math.round(t.mDiff)))}/mo</p>
+      </div>
+    </div>
+    <div class="space-y-1 text-xs">
+      <div class="flex justify-between"><span class="text-muted-fg">Remaining Loan</span><span class="font-mono font-semibold">${t.months}mo</span></div>
+      <div class="flex justify-between"><span class="text-muted-fg">Equity</span><span class="font-mono font-semibold ${t.equity>=0?'text-success':'text-destructive'}">${t.equity>=0?'+':'-'}${fC(Math.abs(t.equity))}</span></div>
+      <div class="flex justify-between"><span class="text-muted-fg">Keep 5yr Cost</span><span class="font-mono">${fC(t.keepCost)}</span></div>
+      <div class="flex justify-between"><span class="text-muted-fg">Switch Total</span><span class="font-mono">${fC(t.switchCost)}</span></div>
+    </div>`;
+
+  if(t.projection.length>1&&(t.projection[0].val>0||t.projection[0].bal>0)){
+    const pts=t.projection.filter(p=>p.m%6===0),mx=Math.max(...pts.map(p=>Math.abs(p.eq)),1);
+    h+=`<div><p class="text-[10px] font-medium text-muted-fg mb-2 uppercase tracking-wider">Equity Timeline</p>
+      <div class="flex items-end gap-1.5 h-16">${pts.map(p=>{
+        const ht=Math.max(10,(Math.abs(p.eq)/mx)*100);
+        return`<div class="flex-1 flex flex-col items-center gap-1"><div class="w-full flex items-end justify-center h-12"><div class="w-full max-w-[20px] rounded-t transition-all ${p.eq>=0?'bg-primary':'bg-destructive'}" style="height:${ht}%"></div></div><span class="text-[8px] text-muted-fg">${p.m===0?'Now':p.m+'mo'}</span></div>`;
+      }).join('')}</div></div>`;
+  }
+
+  if(t.timing.length||t.ins.length){
+    h+=`<div class="flex flex-col gap-2"><p class="text-[10px] font-medium text-muted-fg uppercase tracking-wider">Insights</p>`;
+    t.timing.forEach(tip=>{h+=`<div class="flex items-start gap-2">${ICO.clock}<p class="text-[11px] text-muted-fg leading-relaxed">${tip}</p></div>`});
+    t.ins.forEach(tip=>{h+=`<div class="flex items-start gap-2">${t.equity>=0?ICO.up:ICO.down}<p class="text-[11px] text-muted-fg leading-relaxed mt-0.5">${tip}</p></div>`});
+    h+=`</div>`;
+  }
+  return h+'</div>';
+}
+
+function updateStats(i){
+  const car=state.cars[i],ccOn=state.cc.enabled,ccEquity=state.cc.tradeValue-state.cc.balance;
+  const eff=ccOn?{...car,tradeIn:ccEquity}:car;
+  const r=calcCar(eff,state.shared);
+  const card=document.querySelector(`[data-ci="${i}"]`);if(!card)return;
+  const monthly=card.querySelector('.text-4xl');if(monthly)monthly.textContent=fC(r.monthly);
+  const stats=card.querySelectorAll('.grid.grid-cols-3 .text-sm.font-semibold');
+  if(stats[0])stats[0].textContent=fC(r.totalPaid+r.down);
+  if(stats[1])stats[1].textContent=fC(r.financed);
+  if(stats[2])stats[2].textContent=fC(r.totalInt);
+}
+
+// EVENTS
+let rT=null;
+function sR(){if(rT)cancelAnimationFrame(rT);rT=requestAnimationFrame(render)}
+
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if(el.dataset.zip!==undefined){state.shared.zip=el.value;const m=lookupZip(el.value);if(m){state.shared.taxRate=m.rate;state.shared.taxName=m.name;state.shared.rta=m.rta}else{state.shared.taxName=''}sR();return}
+  if(el.dataset.shared){const v=el.value;if(v.endsWith('.'))return;state.shared[el.dataset.shared]=parseFloat(v)||0;state.shared.taxName='';sR();return}
+  if(el.dataset.cc!==undefined){const k=el.dataset.cc;if(k==='endDate')return;const v=el.value;if(k==='apr'&&v.endsWith('.'))return;state.cc[k]=pN(v);if(!state.cc.enabled&&pN(v)>0)state.cc.enabled=true;sR();return}
+  if(el.dataset.price!==undefined){state.cars[+el.dataset.price].price=pN(el.value);sR();return}
+  if(el.dataset.ti!==undefined){state.cars[+el.dataset.ti].tradeIn=pN(el.value);sR();return}
+  if(el.dataset.dp!==undefined){state.cars[+el.dataset.dp].down=pN(el.value);sR();return}
+  if(el.dataset.apr!==undefined){dragging=true;const i=+el.dataset.apr;state.cars[i].apr=parseFloat(el.value)||0;
+    const lbl=el.closest('div')?.querySelector('.text-primary');if(lbl)lbl.textContent=el.value+'%';
+    updateStats(i);return}
+  if(el.dataset.term!==undefined){dragging=true;const i=+el.dataset.term;state.cars[i].term=parseInt(el.value);
+    const lbl=el.closest('div')?.querySelector('.text-primary');if(lbl)lbl.textContent=el.value+' mo';
+    updateStats(i);return}
+});
+
+document.addEventListener('blur',e=>{
+  if(e.target.tagName!=='INPUT')return;
+  if(!document.getElementById('app').contains(e.target))return;
+  const d=e.target.dataset;
+  if(d.cc!==undefined||d.price!==undefined||d.ti!==undefined||d.dp!==undefined)render();
+},true);
+
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if(el.dataset.cctoggle!==undefined){state.cc.enabled=el.checked;render();return}
+  if(el.dataset.cc==='endDate'){state.cc.endDate=el.value;render();return}
+  if(el.dataset.model!==undefined){
+    const i=+el.dataset.model,m=el.value;state.cars[i].model=m;
+    const first=Object.keys(TESLA_MODELS[m].trims)[0];state.cars[i].trim=first;state.cars[i].price=TESLA_MODELS[m].trims[first].price;render();return}
+  if(el.dataset.trim!==undefined){
+    const i=+el.dataset.trim,t=el.value;state.cars[i].trim=t;state.cars[i].price=TESLA_MODELS[state.cars[i].model].trims[t].price;render();return}
+});
+
+document.addEventListener('click',e=>{
+  const cb=e.target.closest('[data-city]');
+  if(cb){state.shared.taxRate=parseFloat(cb.dataset.city);state.shared.taxName=cb.dataset.cityname||'';state.shared.rta=+(cb.dataset.cityrta||0);state.shared.zip='';render();return}
+
+  const rm=e.target.closest('[data-rm]');
+  if(rm){const i=+rm.dataset.rm;if(state.cars.length>1){state.cars.splice(i,1);if(state.mobileTab>=state.cars.length)state.mobileTab=state.cars.length-1;render()}return}
+
+  if(e.target.closest('[data-add]')||e.target.closest('[data-madd]')){
+    if(state.cars.length<3){state.cars.push({model:'model3',trim:'standard',price:38990,tradeIn:0,down:5000,apr:6.5,term:60});state.mobileTab=state.cars.length-1;render()}return}
+
+  const mb=e.target.closest('[data-modal]');
+  if(mb){state.modalFor=+mb.dataset.modal;render();return}
+
+  if(e.target.closest('[data-modalclose]')&&!e.target.closest('.modal-box')){state.modalFor=-1;render();return}
+  if(e.target.closest('button[data-modalclose]')){state.modalFor=-1;render();return}
+
+  if(e.target.closest('[data-mtab]')){state.mobileTab=+e.target.closest('[data-mtab]').dataset.mtab;render()}
+});
+
+document.addEventListener('mouseup',()=>{if(dragging){dragging=false;render()}});
+document.addEventListener('touchend',()=>{if(dragging){dragging=false;render()}});
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.modalFor>=0){state.modalFor=-1;render()}});
+
+let lW=window.innerWidth;
+window.addEventListener('resize',()=>{const w=window.innerWidth;if((lW<=768&&w>768)||(lW>768&&w<=768)||(lW<1024&&w>=1024)||(lW>=1024&&w<1024))render();lW=w});
+
+render();
+</script>
+</body>
+</html>
