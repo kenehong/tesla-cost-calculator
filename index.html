@@ -389,7 +389,7 @@ function render(){
             </label>
           </div>
           ${ccOn&&ccEquity!==0?`<div class="mb-3 rounded-lg bg-secondary/60 p-2.5"><div class="flex items-center justify-between"><span class="text-[11px] text-muted-fg uppercase tracking-wider">Equity</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${ccEquity>=0?'bg-success text-success-fg':'bg-destructive text-destructive-fg'}">${ccEquity>=0?'+':'-'}${fC(Math.abs(ccEquity))}</span></div><p class="text-[10px] text-muted-fg mt-1">${ccEquity>=0?'Positive equity — good for trade-in':'Negative equity — you owe more than value'}</p></div>`:''}
-          <div class="flex flex-col gap-3">${renderCCFields(cc)}</div>
+          <div class="flex flex-col gap-4">${renderCCFields(cc)}</div>
         </section>
       </div>
     </aside>`;
@@ -435,7 +435,7 @@ function render(){
     </div>`;
   }
 
-  h+=`<div class="${isMobile?'flex flex-col gap-4':'flex gap-5 items-start'}">`;
+  h+=`<div class="${isMobile?'flex flex-col gap-5':'flex gap-6 items-start'}">`;
 
   state.cars.forEach((car,i)=>{
     const r=res[i],t=tra[i];
@@ -457,7 +457,7 @@ function render(){
     </div>`;
 
     // Hero
-    h+=`<div class="px-6 pb-6 text-center">
+    h+=`<div class="px-6 pb-7 text-center">
       <p class="text-5xl font-bold tracking-tight font-mono hero-num">${fC(r.monthly+r.fsdMonthly)}</p>
       <p class="text-[11px] text-muted-fg mt-2 uppercase tracking-[0.15em]">per month</p>
       ${r.fsdMonthly?`<p class="text-[11px] text-muted-fg/60 mt-1">${fC(r.monthly)} loan + $${r.fsdMonthly} FSD</p>`:''}
@@ -501,7 +501,7 @@ function render(){
     }
 
     // Model + Trim
-    h+=`<div class="px-6 pt-5"><div class="grid grid-cols-2 gap-3">
+    h+=`<div class="px-6 pt-6"><div class="grid grid-cols-2 gap-3">
       <div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Model</span>
         <select class="h-9 w-full rounded-md border border-border bg-secondary px-3 text-sm text-foreground outline-none cursor-pointer focus:border-primary transition-colors" data-model="${i}">${Object.entries(TESLA_MODELS).map(([k,v])=>`<option value="${k}" ${car.model===k?'selected':''}>${v.name}</option>`).join('')}</select>
       </div>
@@ -511,7 +511,7 @@ function render(){
     </div></div>`;
 
     // Finance
-    h+=`<div class="px-6 pt-4 pb-6 flex flex-col gap-4">`;
+    h+=`<div class="px-6 pt-5 pb-6 flex flex-col gap-5">`;
 
     h+=`<div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Vehicle Price</span>
       <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" class="text-right font-semibold" value="${fI(car.price)}" data-price="${i}"></label>
@@ -541,7 +541,7 @@ function render(){
     </div>`;
 
     h+=`<div>
-      <div class="flex items-center justify-between mb-1.5">
+      <div class="flex items-center justify-between mb-2">
         <span class="text-[11px] text-muted-fg uppercase tracking-wider">APR</span>
         <span class="text-sm font-mono text-primary font-medium">${car.apr}%</span>
       </div>
@@ -549,7 +549,7 @@ function render(){
     </div>`;
 
     h+=`<div>
-      <div class="flex items-center justify-between mb-1.5">
+      <div class="flex items-center justify-between mb-2">
         <span class="text-[11px] text-muted-fg uppercase tracking-wider">Loan Term</span>
         <span class="text-sm font-mono text-primary font-medium">${car.term} mo</span>
       </div>
