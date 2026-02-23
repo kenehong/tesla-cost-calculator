@@ -253,7 +253,7 @@ const FEES={
 
 const state={
   shared:{zip:'',taxRate:10.5,taxName:'',rta:1},
-  cars:[{model:'modelY',trim:'awd',price:41990,tradeIn:0,down:5000,apr:6.5,term:60}],
+  cars:[{model:'modelY',trim:'awd',price:41990,tradeIn:0,down:5000,apr:6.5,term:60,fsd:false}],
   cc:{enabled:false,payment:0,apr:0,endDate:'',balance:0,tradeValue:0,maintenance:0},
   mobileTab:0,
   modalFor:-1
@@ -274,7 +274,8 @@ function calcCar(car,sh){
   let monthly=0,totalInt=0,totalPaid=0;const sched=[];
   if(apr===0||financed===0){monthly=term>0?financed/term:0;totalPaid=financed;let b=financed;for(let i=1;i<=term;i++){b-=monthly;sched.push({n:i,pmt:monthly,p:monthly,i:0,b:Math.max(b,0)})}}
   else{const r=apr/100/12;monthly=financed*(r*Math.pow(1+r,term))/(Math.pow(1+r,term)-1);totalPaid=monthly*term;totalInt=totalPaid-financed;let b=financed;for(let i=1;i<=term;i++){const ip=b*r,pp=monthly-ip;b-=pp;sched.push({n:i,pmt:monthly,p:pp,i:ip,b:Math.max(b,0)})}}
-  return{price,tradeIn,down,taxRate:sh.taxRate,tax,regFees,evFees,weightFee:wt,rta,luxTax,gov,financed,monthly,totalPaid,totalInt,sched,isCustom,apr,term};
+  const fsdMonthly=car.fsd?99:0,fsdTotal=fsdMonthly*term;
+  return{price,tradeIn,down,taxRate:sh.taxRate,tax,regFees,evFees,weightFee:wt,rta,luxTax,gov,financed,monthly,totalPaid:totalPaid+fsdTotal,totalInt,sched,isCustom,apr,term,fsdMonthly,fsdTotal};
 }
 
 function monthsUntil(d){
@@ -457,8 +458,9 @@ function render(){
 
     // Hero
     h+=`<div class="px-5 pb-5 text-center">
-      <p class="text-4xl font-bold tracking-tight font-mono hero-num">${fC(r.monthly)}</p>
+      <p class="text-4xl font-bold tracking-tight font-mono hero-num">${fC(r.monthly+r.fsdMonthly)}</p>
       <p class="text-[10px] text-muted-fg mt-1.5 uppercase tracking-[0.15em]">per month</p>
+      ${r.fsdMonthly?`<p class="text-[10px] text-muted-fg/60 mt-1">${fC(r.monthly)} loan + $${r.fsdMonthly} FSD</p>`:''}
     </div>`;
 
     // Quick stats
@@ -540,6 +542,17 @@ function render(){
       <input type="range" min="36" max="84" step="12" value="${car.term}" data-term="${i}">
     </div>`;
 
+    h+=`<div class="flex items-center justify-between px-1">
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] text-muted-fg uppercase tracking-wider">FSD Subscription</span>
+        <span class="text-[10px] font-mono text-primary font-medium">$99/mo</span>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" class="sr-only peer" data-fsd="${i}" ${car.fsd?'checked':''}>
+        <div class="w-8 h-[18px] bg-secondary rounded-full peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-card after:rounded-full after:size-3 after:transition-all peer-checked:after:translate-x-3.5"></div>
+      </label>
+    </div>`;
+
     h+=`</div>`;
 
     h+=`<button class="w-full flex flex-col items-center gap-1 py-3 border-t border-border/60 text-muted-fg hover:text-foreground hover:bg-secondary/30 transition-colors cursor-pointer" data-modal="${i}">
@@ -608,6 +621,7 @@ function renderBD(r){
     ...(r.tradeIn<0?[{l:'Underwater',v:'+'+fC(Math.abs(r.tradeIn)),c:'text-destructive'}]:[]),
     {l:'Amount Financed',v:fC(r.financed)},
     {l:'Total Interest',v:fC(r.totalInt),c:'text-destructive'},
+    ...(r.fsdTotal>0?[{l:'FSD Subscription',v:fC(r.fsdTotal),c:'text-primary',sub:`$99/mo × ${r.term}mo`}]:[]),
     {l:'Total Cost',v:fC(r.totalPaid+r.down),c:'font-semibold',total:1}
   ];
   let h='<div><h4 class="text-[10px] font-semibold mb-3 uppercase tracking-[0.1em] text-muted-fg">Itemized Cost</h4><div class="flex flex-col gap-1.5">';
@@ -680,7 +694,7 @@ function updateStats(i){
   const eff=ccOn?{...car,tradeIn:ccEquity}:car;
   const r=calcCar(eff,state.shared);
   const card=document.querySelector(`[data-ci="${i}"]`);if(!card)return;
-  const monthly=card.querySelector('.text-4xl');if(monthly)monthly.textContent=fC(r.monthly);
+  const monthly=card.querySelector('.text-4xl');if(monthly)monthly.textContent=fC(r.monthly+r.fsdMonthly);
   const stats=card.querySelectorAll('.grid.grid-cols-3 .text-sm.font-semibold');
   if(stats[0])stats[0].textContent=fC(r.totalPaid+r.down);
   if(stats[1])stats[1].textContent=fC(r.financed);
@@ -716,6 +730,7 @@ document.addEventListener('blur',e=>{
 
 document.addEventListener('change',e=>{
   const el=e.target;
+  if(el.dataset.fsd!==undefined){state.cars[+el.dataset.fsd].fsd=el.checked;render();return}
   if(el.dataset.cctoggle!==undefined){state.cc.enabled=el.checked;render();return}
   if(el.dataset.cc==='endDate'){state.cc.endDate=el.value;render();return}
   if(el.dataset.model!==undefined){
@@ -733,7 +748,7 @@ document.addEventListener('click',e=>{
   if(rm){const i=+rm.dataset.rm;if(state.cars.length>1){state.cars.splice(i,1);if(state.mobileTab>=state.cars.length)state.mobileTab=state.cars.length-1;render()}return}
 
   if(e.target.closest('[data-add]')||e.target.closest('[data-madd]')){
-    if(state.cars.length<3){state.cars.push({model:'model3',trim:'standard',price:38990,tradeIn:0,down:5000,apr:6.5,term:60});state.mobileTab=state.cars.length-1;render()}return}
+    if(state.cars.length<3){state.cars.push({model:'model3',trim:'standard',price:38990,tradeIn:0,down:5000,apr:6.5,term:60,fsd:false});state.mobileTab=state.cars.length-1;render()}return}
 
   const mb=e.target.closest('[data-modal]');
   if(mb){state.modalFor=+mb.dataset.modal;render();return}
