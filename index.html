@@ -528,7 +528,7 @@ function render(){
           <span class="text-sm font-medium ${car.fsd?'text-primary':'text-muted-fg'}">${car.fsd?'Subscribed':'Not included'}</span>
         </div>
       </div>
-      <span class="text-sm font-mono text-primary font-medium">${car.fsd?'$99/mo':'—'}</span>
+      <span class="text-sm font-mono ${car.fsd?'text-primary':'text-muted-fg'} font-medium">$99/mo</span>
     </div>`;
 
     h+=`<div class="grid grid-cols-2 gap-3">
