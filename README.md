@@ -1,18 +1,37 @@
-# Tesla Cost Calculator
+# Tesla Cost Calculator in WA
 
-A single-file interactive calculator for estimating the true out-the-door cost of purchasing a Tesla in Washington State.
+**The most accurate out-the-door cost estimator for buying a Tesla in Washington State.**
 
-## Features
+No hidden fees. No surprises. Every WA-specific tax and fee included — from EV surcharges to Sound Transit RTA tax to the new luxury tax.
 
-- **Accurate WA State Fees** — Registration, title, EV fees, weight fees, RTA tax (Sound Transit), and luxury tax based on SB 5801 (2025)
-- **All Tesla Models** — Model 3, Y, S, X, Cybertruck with current trim pricing (Feb 2026)
-- **Compare Up to 3 Vehicles** — Side-by-side comparison with "Best" badge
-- **Trade-In Analysis** — Equity calculation, timing insights, 24-month equity projection
-- **Current Car Evaluation** — Enter your current loan details to compare keep vs. switch
-- **Light/Dark Theme** — System preference detection with manual toggle
-- **Mobile Responsive** — Full functionality on all screen sizes
+---
 
-## Fee Breakdown
+## Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **All Tesla Models** | Model 3, Y, S, X, Cybertruck — every trim with live pricing |
+| **WA State Fees** | Registration, title, EV fees, weight fees, RTA tax, luxury tax (SB 5801) |
+| **Auto-Synced Prices** | Prices updated weekly from tesla.com via GitHub Actions |
+| **Compare Up to 3** | Side-by-side comparison with "Best" badge |
+| **Trade-In Analysis** | Equity calc, timing insights, 24-month projection |
+| **Keep vs. Switch** | Compare your current car costs against a new Tesla |
+| **Light / Dark Theme** | System preference detection with manual toggle |
+| **Mobile Responsive** | Full functionality on all screen sizes |
+
+## Auto-Synced Pricing
+
+Prices are **automatically scraped from tesla.com every Monday** via GitHub Actions and committed to `prices.json`. The calculator loads this file at startup, so prices stay current without manual updates.
+
+```
+GitHub Actions (weekly) → scrape tesla.com → update prices.json → auto-commit
+```
+
+- **Schedule:** Every Monday 10:00 UTC
+- **Manual trigger:** Available via `workflow_dispatch`
+- **Fallback:** If scraping fails, existing prices are preserved
+
+## WA State Fee Breakdown
 
 | Fee | Amount | Source |
 |-----|--------|--------|
@@ -27,21 +46,38 @@ A single-file interactive calculator for estimating the true out-the-door cost o
 | EV Registration | $150 | SB 5801 |
 | EV Additional | $50 | SB 5801 |
 | EV Electrification | $75 | WA DOL |
-| Weight Fee | $38–92 | Model-dependent |
+| Weight Fee | $38 - $92 | Model-dependent |
 | RTA Tax | 1.1% of MSRP | Sound Transit areas only |
 | Luxury Tax | 8% over $100K | Effective Jan 2026 |
 
 ## Tech Stack
 
-- Single HTML file — no build step required
+- **Single HTML file** — no build step, no dependencies
 - Tailwind CSS v4 (browser CDN)
-- Inter + JetBrains Mono fonts
 - oklch color system with CSS custom properties
 - Vanilla JavaScript with innerHTML rendering + focus restoration
+- Playwright (Python) for price scraping
+
+## Project Structure
+
+```
+index.html              ← The calculator (open in any browser)
+prices.json             ← Auto-updated Tesla pricing data
+scripts/
+  scrape_prices.py      ← Playwright scraper for tesla.com
+.github/workflows/
+  update-prices.yml     ← Weekly GitHub Actions workflow
+```
 
 ## Usage
 
 Open `index.html` in any modern browser. No server required.
+
+For local development with auto-sync testing:
+```bash
+python -m http.server 8000
+# Open http://localhost:8000
+```
 
 ## License
 

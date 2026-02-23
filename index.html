@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tesla Cost Calculator</title>
+<title>Tesla Cost Calculator in WA</title>
 <script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -152,11 +152,14 @@ label.inp input { background:transparent; outline:none; border:none; font-size:0
       <svg class="w-5 h-5 text-accent" viewBox="0 0 100 100" fill="currentColor"><path d="M50 5C35 5 22 8 10 14l5 10c10-5 22-8 35-8s25 3 35 8l5-10C78 8 65 5 50 5zm0 20c-3 0-5 0-5 0l-2 70h14l-2-70s-2 0-5 0z"/></svg>
       <div>
         <h1 class="tesla-t text-foreground tracking-[0.12em]">TESLA</h1>
-        <p class="text-[9px] text-muted-fg leading-none tracking-[0.08em] uppercase">Cost Calculator</p>
+        <p class="text-[9px] text-muted-fg leading-none tracking-[0.08em] uppercase">Cost Calculator in WA</p>
       </div>
     </div>
     <div class="flex-1"></div>
-    <span class="text-[9px] text-muted-fg/50 tracking-wider uppercase hidden sm:block">Washington State</span>
+    <div id="sync-badge" class="hidden sm:flex items-center gap-1.5 text-[9px] text-muted-fg/60 tracking-wider">
+      <span class="inline-block size-1.5 rounded-full bg-success/60 animate-pulse"></span>
+      <span id="sync-text">Synced from tesla.com</span>
+    </div>
     <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
       <svg class="ico-sun size-[18px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       <svg class="ico-moon size-[18px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -175,7 +178,7 @@ window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',e=>{
   if(!localStorage.getItem('theme')){document.documentElement.classList.toggle('dark',e.matches)}
 });
 
-const TESLA_MODELS={
+let TESLA_MODELS={
   model3:{name:'Model 3',wt:38,trims:{standard:{name:'RWD',price:38990},longRange:{name:'Long Range AWD',price:46990},performance:{name:'Performance',price:54990}}},
   modelY:{name:'Model Y',wt:53,trims:{standard:{name:'RWD',price:39990},awd:{name:'AWD',price:41990},longRange:{name:'Long Range AWD',price:48990},performance:{name:'Performance',price:57490}}},
   modelS:{name:'Model S',wt:65,trims:{awd:{name:'AWD',price:84990},plaid:{name:'Plaid',price:109990}}},
@@ -183,6 +186,37 @@ const TESLA_MODELS={
   cybertruck:{name:'Cybertruck',wt:92,trims:{awd:{name:'AWD',price:61990},premium:{name:'Premium',price:81990},cyberbeast:{name:'Cyberbeast',price:99990}}},
   custom:{name:'Custom',wt:53,trims:{custom:{name:'Custom',price:0}}}
 };
+
+async function loadPrices(){
+  try{
+    const res=await fetch('prices.json');
+    if(!res.ok)return;
+    const data=await res.json();
+    if(data.models){
+      for(const[k,v]of Object.entries(data.models)){
+        if(TESLA_MODELS[k]){
+          TESLA_MODELS[k].name=v.name||TESLA_MODELS[k].name;
+          TESLA_MODELS[k].wt=v.wt||TESLA_MODELS[k].wt;
+          if(v.trims)TESLA_MODELS[k].trims={...TESLA_MODELS[k].trims,...v.trims};
+        }
+      }
+    }
+    const badge=document.getElementById('sync-badge');
+    const txt=document.getElementById('sync-text');
+    if(badge&&txt&&data.lastUpdated){
+      txt.textContent=`Prices: ${data.lastUpdated}`;
+      badge.title=`Auto-synced weekly from tesla.com\nLast updated: ${data.lastUpdated}`;
+    }
+    // Update current car prices to match loaded data
+    for(const car of state.cars){
+      if(car.model!=='custom'){
+        const t=TESLA_MODELS[car.model]?.trims[car.trim];
+        if(t)car.price=t.price;
+      }
+    }
+    render();
+  }catch(e){/* fallback to hardcoded */}
+}
 
 const WA_CITIES=[
   {name:'Seattle',rate:10.55,rta:1,zips:['98101','98102','98103','98104','98105','98107','98109','98112','98115','98116','98117','98119','98121','98122','98125','98134','98136','98144','98199']},
@@ -716,6 +750,7 @@ let lW=window.innerWidth;
 window.addEventListener('resize',()=>{const w=window.innerWidth;if((lW<=768&&w>768)||(lW>768&&w<=768)||(lW<1024&&w>=1024)||(lW>=1024&&w<1024))render();lW=w});
 
 render();
+loadPrices();
 </script>
 </body>
 </html>

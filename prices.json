@@ -1,0 +1,50 @@
+{
+  "lastUpdated": "2026-02-22",
+  "source": "tesla.com",
+  "models": {
+    "model3": {
+      "name": "Model 3",
+      "wt": 38,
+      "trims": {
+        "standard": { "name": "RWD", "price": 38990 },
+        "longRange": { "name": "Long Range AWD", "price": 46990 },
+        "performance": { "name": "Performance", "price": 54990 }
+      }
+    },
+    "modelY": {
+      "name": "Model Y",
+      "wt": 53,
+      "trims": {
+        "standard": { "name": "RWD", "price": 39990 },
+        "awd": { "name": "AWD", "price": 41990 },
+        "longRange": { "name": "Long Range AWD", "price": 48990 },
+        "performance": { "name": "Performance", "price": 57490 }
+      }
+    },
+    "modelS": {
+      "name": "Model S",
+      "wt": 65,
+      "trims": {
+        "awd": { "name": "AWD", "price": 84990 },
+        "plaid": { "name": "Plaid", "price": 109990 }
+      }
+    },
+    "modelX": {
+      "name": "Model X",
+      "wt": 72,
+      "trims": {
+        "awd": { "name": "AWD", "price": 89990 },
+        "plaid": { "name": "Plaid", "price": 114990 }
+      }
+    },
+    "cybertruck": {
+      "name": "Cybertruck",
+      "wt": 92,
+      "trims": {
+        "awd": { "name": "AWD", "price": 61990 },
+        "premium": { "name": "Premium", "price": 81990 },
+        "cyberbeast": { "name": "Cyberbeast", "price": 99990 }
+      }
+    }
+  }
+}
