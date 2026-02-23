@@ -522,9 +522,13 @@ function render(){
         <span class="text-[11px] text-muted-fg uppercase tracking-wider">Full Self-Driving</span>
         <span class="text-sm font-mono text-primary font-medium">$99/mo</span>
       </div>
-      <button class="w-full h-9 rounded-md border ${car.fsd?'border-primary bg-primary text-primary-fg':'border-border bg-secondary text-foreground'} text-sm font-medium tracking-wide transition-colors cursor-pointer" data-fsdtoggle="${i}">
-        ${car.fsd?'ON':'OFF'}
-      </button>
+      <div class="flex items-center gap-2">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" class="sr-only peer" data-fsd="${i}" ${car.fsd?'checked':''}>
+          <div class="w-9 h-5 bg-border rounded-full peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-card after:rounded-full after:size-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+        </label>
+        <span class="text-sm font-medium ${car.fsd?'text-primary':'text-muted-fg'}">${car.fsd?'On':'Off'}</span>
+      </div>
     </div>`;
 
     h+=`<div class="grid grid-cols-2 gap-3">
@@ -729,6 +733,7 @@ document.addEventListener('blur',e=>{
 
 document.addEventListener('change',e=>{
   const el=e.target;
+  if(el.dataset.fsd!==undefined){state.cars[+el.dataset.fsd].fsd=el.checked;render();return}
   if(el.dataset.cctoggle!==undefined){state.cc.enabled=el.checked;render();return}
   if(el.dataset.cc==='endDate'){state.cc.endDate=el.value;render();return}
   if(el.dataset.model!==undefined){
@@ -739,9 +744,6 @@ document.addEventListener('change',e=>{
 });
 
 document.addEventListener('click',e=>{
-  const fsdBtn=e.target.closest('[data-fsdtoggle]');
-  if(fsdBtn){const i=+fsdBtn.dataset.fsdtoggle;state.cars[i].fsd=!state.cars[i].fsd;render();return}
-
   const cb=e.target.closest('[data-city]');
   if(cb){state.shared.taxRate=parseFloat(cb.dataset.city);state.shared.taxName=cb.dataset.cityname||'';state.shared.rta=+(cb.dataset.cityrta||0);state.shared.zip='';render();return}
 
