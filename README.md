@@ -50,6 +50,15 @@ GitHub Actions (weekly) → scrape tesla.com → update prices.json → auto-com
 | RTA Tax | 1.1% of MSRP | Sound Transit areas only |
 | Luxury Tax | 8% over $100K | Effective Jan 2026 |
 
+> **Disclaimer:** Fee amounts are estimates and may not reflect the most current rates. Always verify with your local DOL office before making a purchase decision.
+
+**Sources:**
+- [WA DOL — Vehicle Registration Fees](https://www.dol.wa.gov/vehicles-and-boats/vehicle-title-and-registration/vehicle-registration-fees)
+- [SB 5801 — EV Fee Restructuring (2025)](https://lawfilesext.leg.wa.gov/biennium/2025-26/Pdf/Bills/Session%20Laws/Senate/5801-S.SL.pdf)
+- [Sound Transit — RTA Motor Vehicle Excise Tax](https://www.soundtransit.org/get-to-know-us/paying-for-system-expansion/motor-vehicle-excise-tax)
+- [Tesla.com — Vehicle Pricing](https://www.tesla.com)
+- [WA DOR — Sales Tax Rates](https://dor.wa.gov/taxes-rates/sales-use-tax-rates)
+
 ## Tech Stack
 
 - **Single HTML file** — no build step, no dependencies

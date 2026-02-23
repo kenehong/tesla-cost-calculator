@@ -610,7 +610,8 @@ function renderBD(r){
   ];
   let h='<div><h4 class="text-[10px] font-semibold mb-3 uppercase tracking-[0.1em] text-muted-fg">Itemized Cost</h4><div class="flex flex-col gap-1.5">';
   rows.forEach(r=>{h+=`<div class="flex flex-col ${r.total?'border-t border-border pt-2 mt-1':''}"><div class="flex items-center justify-between text-xs"><span class="text-muted-fg">${r.l}</span><span class="font-mono ${r.c||''}">${r.v}</span></div>${r.sub?`<p class="text-[9px] text-muted-fg/60 mt-0.5">${r.sub}</p>`:''}</div>`});
-  h+=`</div><div class="mt-3 pt-3 border-t border-border/50"><div class="flex justify-between text-[10px] text-muted-fg"><span>Gov Fees Total</span><span class="font-mono">${fC(r.gov)}</span></div></div></div>`;
+  h+=`</div><div class="mt-3 pt-3 border-t border-border/50"><div class="flex justify-between text-[10px] text-muted-fg"><span>Gov Fees Total</span><span class="font-mono">${fC(r.gov)}</span></div></div>`;
+  h+=`<div class="mt-3 pt-2 border-t border-border/30"><p class="text-[8px] text-muted-fg/40 leading-relaxed">Fees are estimates and may vary. Sources: <a href="https://www.dol.wa.gov/vehicles-and-boats/vehicle-title-and-registration/vehicle-registration-fees" target="_blank" class="underline hover:text-muted-fg/60">WA DOL</a> · <a href="https://lawfilesext.leg.wa.gov/biennium/2025-26/Pdf/Bills/Session%20Laws/Senate/5801-S.SL.pdf" target="_blank" class="underline hover:text-muted-fg/60">SB 5801</a> · <a href="https://www.soundtransit.org/ride-with-us/how-to-pay/fares" target="_blank" class="underline hover:text-muted-fg/60">Sound Transit</a> · <a href="https://www.tesla.com" target="_blank" class="underline hover:text-muted-fg/60">tesla.com</a></p></div></div>`;
   return h;
 }
 
