@@ -517,18 +517,14 @@ function render(){
       <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" class="text-right font-semibold" value="${fI(car.price)}" data-price="${i}"></label>
       <p class="text-[11px] text-muted-fg/50 mt-1.5">Enter final price with options from tesla.com</p></div>`;
 
-    h+=`<div class="flex items-center justify-between rounded-lg border ${car.fsd?'border-primary/30 bg-primary/5':'border-border bg-secondary/50'} px-3.5 py-3 transition-colors">
-      <div class="flex items-center gap-3">
-        <svg class="size-5 ${car.fsd?'text-primary':'text-muted-fg'} shrink-0 transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/><path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/></svg>
-        <div>
-          <p class="text-[11px] font-semibold ${car.fsd?'text-foreground':'text-foreground/80'} transition-colors">Full Self-Driving</p>
-          <p class="text-[10px] ${car.fsd?'text-primary':'text-muted-fg'} mt-0.5">Subscription · $99/mo</p>
-        </div>
+    h+=`<div>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[11px] text-muted-fg uppercase tracking-wider">Full Self-Driving</span>
+        <span class="text-sm font-mono text-primary font-medium">$99/mo</span>
       </div>
-      <label class="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" class="sr-only peer" data-fsd="${i}" ${car.fsd?'checked':''}>
-        <div class="w-9 h-5 bg-border rounded-full peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-card after:rounded-full after:size-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-      </label>
+      <button class="w-full h-9 rounded-md border ${car.fsd?'border-primary bg-primary text-primary-fg':'border-border bg-secondary text-foreground'} text-sm font-medium tracking-wide transition-colors cursor-pointer" data-fsdtoggle="${i}">
+        ${car.fsd?'ON':'OFF'}
+      </button>
     </div>`;
 
     h+=`<div class="grid grid-cols-2 gap-3">
@@ -733,7 +729,6 @@ document.addEventListener('blur',e=>{
 
 document.addEventListener('change',e=>{
   const el=e.target;
-  if(el.dataset.fsd!==undefined){state.cars[+el.dataset.fsd].fsd=el.checked;render();return}
   if(el.dataset.cctoggle!==undefined){state.cc.enabled=el.checked;render();return}
   if(el.dataset.cc==='endDate'){state.cc.endDate=el.value;render();return}
   if(el.dataset.model!==undefined){
@@ -744,6 +739,9 @@ document.addEventListener('change',e=>{
 });
 
 document.addEventListener('click',e=>{
+  const fsdBtn=e.target.closest('[data-fsdtoggle]');
+  if(fsdBtn){const i=+fsdBtn.dataset.fsdtoggle;state.cars[i].fsd=!state.cars[i].fsd;render();return}
+
   const cb=e.target.closest('[data-city]');
   if(cb){state.shared.taxRate=parseFloat(cb.dataset.city);state.shared.taxName=cb.dataset.cityname||'';state.shared.rta=+(cb.dataset.cityrta||0);state.shared.zip='';render();return}
 
