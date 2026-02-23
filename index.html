@@ -110,7 +110,7 @@ select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .amort-wrap::-webkit-scrollbar-track { background:transparent; }
 .amort-wrap::-webkit-scrollbar-thumb { background:var(--c-border); border-radius:9999px; }
 
-label.inp { display:flex; align-items:center; height:32px; border-radius:0.375rem; border:1px solid var(--c-border); background:var(--c-secondary); padding:0 8px; gap:4px; cursor:text; transition:border-color .15s, box-shadow .15s; }
+label.inp { display:flex; align-items:center; height:36px; border-radius:0.375rem; border:1px solid var(--c-border); background:var(--c-secondary); padding:0 10px; gap:6px; cursor:text; transition:border-color .15s, box-shadow .15s; }
 label.inp:focus-within { border-color:var(--c-primary); box-shadow:0 0 0 2px var(--c-glow); }
 label.inp input { background:transparent; outline:none; border:none; font-size:0.875rem; color:var(--c-fg); flex:1; min-width:0; font-family:'JetBrains Mono',monospace; }
 
@@ -141,22 +141,22 @@ label.inp input { background:transparent; outline:none; border:none; font-size:0
 .bar-seg { position:relative; overflow:hidden; }
 .bar-seg::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%); }
 
-.tesla-t { font-weight:800; letter-spacing:0.12em; font-size:13px; }
+.tesla-t { font-weight:800; letter-spacing:0.12em; font-size:15px; }
 </style>
 </head>
 <body class="min-h-screen bg-background text-foreground">
 
 <header class="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
-  <div class="flex items-center gap-3 px-4 lg:px-6 h-14">
+  <div class="flex items-center gap-3 px-4 lg:px-6 h-16">
     <div class="flex items-center gap-2.5">
       <svg class="w-5 h-5 text-accent" viewBox="0 0 100 100" fill="currentColor"><path d="M50 5C35 5 22 8 10 14l5 10c10-5 22-8 35-8s25 3 35 8l5-10C78 8 65 5 50 5zm0 20c-3 0-5 0-5 0l-2 70h14l-2-70s-2 0-5 0z"/></svg>
       <div>
         <h1 class="tesla-t text-foreground tracking-[0.12em]">TESLA</h1>
-        <p class="text-[9px] text-muted-fg leading-none tracking-[0.08em] uppercase">Cost Calculator in WA</p>
+        <p class="text-[10px] text-muted-fg leading-none tracking-[0.08em] uppercase">Cost Calculator in WA</p>
       </div>
     </div>
     <div class="flex-1"></div>
-    <div id="sync-badge" class="hidden sm:flex items-center gap-1.5 text-[9px] text-muted-fg/60 tracking-wider">
+    <div id="sync-badge" class="hidden sm:flex items-center gap-1.5 text-[10px] text-muted-fg/60 tracking-wider">
       <span class="inline-block size-1.5 rounded-full bg-success/60 animate-pulse"></span>
       <span id="sync-text">Synced from tesla.com</span>
     </div>
@@ -319,12 +319,12 @@ const ICO={
 
 function renderCCFields(cc){
   const f=(label,pre,suf,val,key)=>`<div>
-    <span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">${label}</span>
+    <span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">${label}</span>
     <label class="inp">${pre?`<span class="text-xs text-muted-fg">${pre}</span>`:''}<input type="text" value="${val}" data-cc="${key}">${suf?`<span class="text-xs text-muted-fg">${suf}</span>`:''}</label></div>`;
   return f('Monthly Payment','$','',fI(cc.payment||0),'payment')
     +f('APR','','%',cc.apr!=null?cc.apr:'0','apr')
-    +`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Loan End</span>
-      <input type="month" class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-sm text-foreground outline-none font-mono focus:border-primary transition-colors" value="${cc.endDate}" data-cc="endDate"></div>`
+    +`<div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Loan End</span>
+      <input type="month" class="h-9 w-full rounded-md border border-border bg-secondary px-3 text-sm text-foreground outline-none font-mono focus:border-primary transition-colors" value="${cc.endDate}" data-cc="endDate"></div>`
     +f('Balance','$','',fI(cc.balance||0),'balance')
     +f('Trade Value','$','',fI(cc.tradeValue||0),'tradeValue')
     +f('Maintenance/yr','$','',fI(cc.maintenance||0),'maintenance');
@@ -361,19 +361,19 @@ function render(){
 
   // DESKTOP SIDEBAR
   if(useSidebar){
-    h+=`<aside class="hidden lg:block lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto border-r border-border bg-sidebar p-4 w-[230px] shrink-0">
-      <div class="flex flex-col gap-5">
+    h+=`<aside class="hidden lg:block lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto border-r border-border bg-sidebar p-5 w-[250px] shrink-0">
+      <div class="flex flex-col gap-6">
         <section>
-          <div class="flex items-center gap-2 mb-3">${ICO.map}<h2 class="text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-fg">Location</h2></div>
+          <div class="flex items-center gap-2 mb-3">${ICO.map}<h2 class="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-fg">Location</h2></div>
           <div class="flex flex-col gap-3">
             <div>
-              <span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">ZIP Code</span>
-              <input type="text" class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-sm text-foreground outline-none focus:border-primary transition-colors" placeholder="ZIP or city" value="${state.shared.zip}" data-zip maxlength="5">
+              <span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">ZIP Code</span>
+              <input type="text" class="h-9 w-full rounded-md border border-border bg-secondary px-3 text-sm text-foreground outline-none focus:border-primary transition-colors" placeholder="ZIP or city" value="${state.shared.zip}" data-zip maxlength="5">
               ${hasMatch?`<p class="text-[10px] text-primary mt-1.5 font-medium">${state.shared.taxName}</p>`:''}
               ${isNonWA?`<p class="text-[10px] text-warning/80 mt-1.5">Not a WA ZIP — tax rate may differ</p>`:''}
             </div>
             <div>
-              <span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Tax Rate</span>
+              <span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Tax Rate</span>
               <label class="inp"><input type="text" class="text-right" value="${state.shared.taxRate}" data-shared="taxRate"><span class="text-xs text-muted-fg">%</span></label>
             </div>
             ${state.shared.zip&&!hasMatch?`<div class="flex flex-wrap gap-1">${filtered.slice(0,8).map(c=>`<button class="px-2 py-0.5 rounded-md text-[10px] text-muted-fg hover:text-foreground hover:bg-secondary/80 transition-colors cursor-pointer" data-city="${c.rate}" data-cityname="${c.name}" data-cityrta="${c.rta||0}">${c.name} <span class="text-warning font-mono">${c.rate}%</span></button>`).join('')}</div>`:''}
@@ -382,13 +382,13 @@ function render(){
         <div class="h-px bg-border"></div>
         <section>
           <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">${ICO.car}<h2 class="text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-fg">Current Car</h2></div>
+            <div class="flex items-center gap-2">${ICO.car}<h2 class="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-fg">Current Car</h2></div>
             <label class="flex items-center gap-1.5 cursor-pointer">
               <span class="text-[9px] text-muted-fg uppercase tracking-wider">Trade-In</span>
               <input type="checkbox" class="sw" ${ccOn?'checked':''} data-cctoggle>
             </label>
           </div>
-          ${ccOn&&ccEquity!==0?`<div class="mb-3 rounded-lg bg-secondary/60 p-2.5"><div class="flex items-center justify-between"><span class="text-[10px] text-muted-fg uppercase tracking-wider">Equity</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${ccEquity>=0?'bg-success text-success-fg':'bg-destructive text-destructive-fg'}">${ccEquity>=0?'+':'-'}${fC(Math.abs(ccEquity))}</span></div><p class="text-[10px] text-muted-fg mt-1">${ccEquity>=0?'Positive equity — good for trade-in':'Negative equity — you owe more than value'}</p></div>`:''}
+          ${ccOn&&ccEquity!==0?`<div class="mb-3 rounded-lg bg-secondary/60 p-2.5"><div class="flex items-center justify-between"><span class="text-[11px] text-muted-fg uppercase tracking-wider">Equity</span><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${ccEquity>=0?'bg-success text-success-fg':'bg-destructive text-destructive-fg'}">${ccEquity>=0?'+':'-'}${fC(Math.abs(ccEquity))}</span></div><p class="text-[10px] text-muted-fg mt-1">${ccEquity>=0?'Positive equity — good for trade-in':'Negative equity — you owe more than value'}</p></div>`:''}
           <div class="flex flex-col gap-3">${renderCCFields(cc)}</div>
         </section>
       </div>
@@ -421,7 +421,7 @@ function render(){
   }
 
   // MAIN CONTENT
-  h+=`<main class="flex-1 p-4 lg:p-6 min-w-0">`;
+  h+=`<main class="flex-1 p-5 lg:p-8 min-w-0">`;
 
   if(isMobile&&state.cars.length>1){
     h+=`<div class="flex items-center gap-2 mb-4">
@@ -448,34 +448,34 @@ function render(){
 
     if(isBestM) h+=`<div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>`;
 
-    h+=`<div class="flex items-center justify-between px-5 pt-5 pb-2">
+    h+=`<div class="flex items-center justify-between px-6 pt-6 pb-3">
       <div class="flex items-center gap-2.5">
-        <h3 class="text-xs font-semibold uppercase tracking-[0.08em]">${mn}</h3>
+        <h3 class="text-sm font-semibold uppercase tracking-[0.08em]">${mn}</h3>
         ${isBestM&&state.cars.length>1?`<span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">${ICO.trophy}Best</span>`:''}
       </div>
       ${state.cars.length>1?`<button class="size-7 flex items-center justify-center rounded-md text-muted-fg hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer" data-rm="${i}">${ICO.x}</button>`:''}
     </div>`;
 
     // Hero
-    h+=`<div class="px-5 pb-5 text-center">
-      <p class="text-4xl font-bold tracking-tight font-mono hero-num">${fC(r.monthly+r.fsdMonthly)}</p>
-      <p class="text-[10px] text-muted-fg mt-1.5 uppercase tracking-[0.15em]">per month</p>
-      ${r.fsdMonthly?`<p class="text-[10px] text-muted-fg/60 mt-1">${fC(r.monthly)} loan + $${r.fsdMonthly} FSD</p>`:''}
+    h+=`<div class="px-6 pb-6 text-center">
+      <p class="text-5xl font-bold tracking-tight font-mono hero-num">${fC(r.monthly+r.fsdMonthly)}</p>
+      <p class="text-[11px] text-muted-fg mt-2 uppercase tracking-[0.15em]">per month</p>
+      ${r.fsdMonthly?`<p class="text-[11px] text-muted-fg/60 mt-1">${fC(r.monthly)} loan + $${r.fsdMonthly} FSD</p>`:''}
     </div>`;
 
     // Quick stats
     h+=`<div class="grid grid-cols-3 border-t border-border/60">
-      <div class="px-3 py-3 text-center border-r border-border/60">
-        <p class="text-[9px] uppercase tracking-[0.1em] text-muted-fg mb-1">Total</p>
-        <p class="text-sm font-semibold font-mono ${isBestT&&state.cars.length>1?'text-success':''}">${fC(r.totalPaid+r.down)}</p>
+      <div class="px-4 py-4 text-center border-r border-border/60">
+        <p class="text-[10px] uppercase tracking-[0.1em] text-muted-fg mb-1.5">Total</p>
+        <p class="text-base font-semibold font-mono ${isBestT&&state.cars.length>1?'text-success':''}">${fC(r.totalPaid+r.down)}</p>
       </div>
-      <div class="px-3 py-3 text-center border-r border-border/60">
-        <p class="text-[9px] uppercase tracking-[0.1em] text-muted-fg mb-1">Financed</p>
-        <p class="text-sm font-semibold font-mono">${fC(r.financed)}</p>
+      <div class="px-4 py-4 text-center border-r border-border/60">
+        <p class="text-[10px] uppercase tracking-[0.1em] text-muted-fg mb-1.5">Financed</p>
+        <p class="text-base font-semibold font-mono">${fC(r.financed)}</p>
       </div>
-      <div class="px-3 py-3 text-center">
-        <p class="text-[9px] uppercase tracking-[0.1em] text-destructive/70 mb-1">Interest</p>
-        <p class="text-sm font-semibold font-mono text-destructive">${fC(r.totalInt)}</p>
+      <div class="px-4 py-4 text-center">
+        <p class="text-[10px] uppercase tracking-[0.1em] text-destructive/70 mb-1.5">Interest</p>
+        <p class="text-base font-semibold font-mono text-destructive">${fC(r.totalInt)}</p>
       </div>
     </div>`;
 
@@ -484,80 +484,80 @@ function render(){
     const bT=netVehicle+r.totalInt+r.tax+r.gov;
     if(bT>0){
       const pP=(netVehicle/bT*100).toFixed(1),iP=(r.totalInt/bT*100).toFixed(1),tP=(r.tax/bT*100).toFixed(1),fP=(r.gov/bT*100).toFixed(1);
-      h+=`<div class="px-5 pt-4">
-        <div class="flex h-2 w-full overflow-hidden rounded-full bg-secondary">
+      h+=`<div class="px-6 pt-5">
+        <div class="flex h-2.5 w-full overflow-hidden rounded-full bg-secondary">
           <div class="bar-seg bg-primary transition-all duration-500 rounded-l-full" style="width:${pP}%"></div>
           ${r.totalInt>0?`<div class="bar-seg bg-destructive transition-all duration-500" style="width:${iP}%"></div>`:''}
           ${r.tax>0?`<div class="bar-seg bg-warning transition-all duration-500" style="width:${tP}%"></div>`:''}
           ${r.gov>0?`<div class="bar-seg bg-muted-fg/30 transition-all duration-500 rounded-r-full" style="width:${fP}%"></div>`:''}
         </div>
-        <div class="flex items-center gap-3 flex-wrap mt-2">
-          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-primary"></div><span class="text-[10px] text-muted-fg">Principal</span></div>
-          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-destructive"></div><span class="text-[10px] text-muted-fg">Interest ${fC(r.totalInt)}</span></div>
-          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-warning"></div><span class="text-[10px] text-muted-fg">Tax ${fC(r.tax)}</span></div>
-          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-muted-fg/30"></div><span class="text-[10px] text-muted-fg">Fees ${fC(r.gov)}</span></div>
+        <div class="flex items-center gap-3 flex-wrap mt-3">
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-primary"></div><span class="text-[11px] text-muted-fg">Principal</span></div>
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-destructive"></div><span class="text-[11px] text-muted-fg">Interest ${fC(r.totalInt)}</span></div>
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-warning"></div><span class="text-[11px] text-muted-fg">Tax ${fC(r.tax)}</span></div>
+          <div class="flex items-center gap-1.5"><div class="size-2 rounded-full bg-muted-fg/30"></div><span class="text-[11px] text-muted-fg">Fees ${fC(r.gov)}</span></div>
         </div>
       </div>`;
     }
 
     // Model + Trim
-    h+=`<div class="px-5 pt-4"><div class="grid grid-cols-2 gap-2">
-      <div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Model</span>
-        <select class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-xs text-foreground outline-none cursor-pointer focus:border-primary transition-colors" data-model="${i}">${Object.entries(TESLA_MODELS).map(([k,v])=>`<option value="${k}" ${car.model===k?'selected':''}>${v.name}</option>`).join('')}</select>
+    h+=`<div class="px-6 pt-5"><div class="grid grid-cols-2 gap-3">
+      <div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Model</span>
+        <select class="h-9 w-full rounded-md border border-border bg-secondary px-3 text-sm text-foreground outline-none cursor-pointer focus:border-primary transition-colors" data-model="${i}">${Object.entries(TESLA_MODELS).map(([k,v])=>`<option value="${k}" ${car.model===k?'selected':''}>${v.name}</option>`).join('')}</select>
       </div>
-      <div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Trim</span>
-        <select class="h-8 w-full rounded-md border border-border bg-secondary px-2 text-xs text-foreground outline-none cursor-pointer focus:border-primary transition-colors" data-trim="${i}">${Object.entries(TESLA_MODELS[car.model].trims).map(([k,v])=>`<option value="${k}" ${car.trim===k?'selected':''}>${v.name}</option>`).join('')}</select>
+      <div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Trim</span>
+        <select class="h-9 w-full rounded-md border border-border bg-secondary px-3 text-sm text-foreground outline-none cursor-pointer focus:border-primary transition-colors" data-trim="${i}">${Object.entries(TESLA_MODELS[car.model].trims).map(([k,v])=>`<option value="${k}" ${car.trim===k?'selected':''}>${v.name}</option>`).join('')}</select>
       </div>
     </div></div>`;
 
     // Finance
-    h+=`<div class="px-5 pt-3 pb-5 flex flex-col gap-3">`;
+    h+=`<div class="px-6 pt-4 pb-6 flex flex-col gap-4">`;
 
-    h+=`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Vehicle Price</span>
+    h+=`<div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Vehicle Price</span>
       <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" class="text-right font-semibold" value="${fI(car.price)}" data-price="${i}"></label>
-      <p class="text-[10px] text-muted-fg/50 mt-1">Enter final price with options from tesla.com</p></div>`;
+      <p class="text-[11px] text-muted-fg/50 mt-1.5">Enter final price with options from tesla.com</p></div>`;
 
-    h+=`<div class="grid grid-cols-2 gap-2">
-      <div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Down Payment</span>
+    h+=`<div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] text-muted-fg uppercase tracking-wider">FSD Subscription</span>
+        <span class="text-[11px] font-mono text-primary font-medium">$99/mo</span>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" class="sr-only peer" data-fsd="${i}" ${car.fsd?'checked':''}>
+        <div class="w-9 h-5 bg-secondary rounded-full peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-card after:rounded-full after:size-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+      </label>
+    </div>`;
+
+    h+=`<div class="grid grid-cols-2 gap-3">
+      <div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Down Payment</span>
         <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" value="${car.down?fI(car.down):'0'}" data-dp="${i}"></label></div>
-      ${!ccOn?`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Trade-In</span>
+      ${!ccOn?`<div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Trade-In</span>
         <label class="inp"><span class="text-xs text-muted-fg">$</span><input type="text" value="${car.tradeIn?fI(car.tradeIn):'0'}" data-ti="${i}"></label></div>`
-      :`<div><span class="text-[10px] text-muted-fg mb-1 block uppercase tracking-wider">Equity</span>
+      :`<div><span class="text-[11px] text-muted-fg mb-1.5 block uppercase tracking-wider">Equity</span>
         <div class="h-8 flex items-center"><span class="text-sm font-semibold font-mono ${tiVal>=0?'text-success':'text-destructive'}">${tiVal>=0?'+':'-'}${fC(Math.abs(tiVal))}</span></div></div>`}
     </div>`;
 
     h+=`<div>
       <div class="flex items-center justify-between mb-1.5">
-        <span class="text-[10px] text-muted-fg uppercase tracking-wider">APR</span>
-        <span class="text-xs font-mono text-primary font-medium">${car.apr}%</span>
+        <span class="text-[11px] text-muted-fg uppercase tracking-wider">APR</span>
+        <span class="text-sm font-mono text-primary font-medium">${car.apr}%</span>
       </div>
       <input type="range" min="0" max="15" step="0.25" value="${car.apr}" data-apr="${i}">
     </div>`;
 
     h+=`<div>
       <div class="flex items-center justify-between mb-1.5">
-        <span class="text-[10px] text-muted-fg uppercase tracking-wider">Loan Term</span>
-        <span class="text-xs font-mono text-primary font-medium">${car.term} mo</span>
+        <span class="text-[11px] text-muted-fg uppercase tracking-wider">Loan Term</span>
+        <span class="text-sm font-mono text-primary font-medium">${car.term} mo</span>
       </div>
       <input type="range" min="36" max="84" step="12" value="${car.term}" data-term="${i}">
     </div>`;
 
-    h+=`<div class="flex items-center justify-between px-1">
-      <div class="flex items-center gap-2">
-        <span class="text-[10px] text-muted-fg uppercase tracking-wider">FSD Subscription</span>
-        <span class="text-[10px] font-mono text-primary font-medium">$99/mo</span>
-      </div>
-      <label class="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" class="sr-only peer" data-fsd="${i}" ${car.fsd?'checked':''}>
-        <div class="w-8 h-[18px] bg-secondary rounded-full peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-card after:rounded-full after:size-3 after:transition-all peer-checked:after:translate-x-3.5"></div>
-      </label>
-    </div>`;
-
     h+=`</div>`;
 
-    h+=`<button class="w-full flex flex-col items-center gap-1 py-3 border-t border-border/60 text-muted-fg hover:text-foreground hover:bg-secondary/30 transition-colors cursor-pointer" data-modal="${i}">
-      <span class="flex items-center gap-2 text-[10px] uppercase tracking-[0.1em]">${ICO.detail} Detailed Breakdown</span>
-      <span class="text-[10px] text-muted-fg/40">All WA fees, taxes & amortization schedule</span>
+    h+=`<button class="w-full flex flex-col items-center gap-1.5 py-4 border-t border-border/60 text-muted-fg hover:text-foreground hover:bg-secondary/30 transition-colors cursor-pointer" data-modal="${i}">
+      <span class="flex items-center gap-2 text-[11px] uppercase tracking-[0.1em]">${ICO.detail} Detailed Breakdown</span>
+      <span class="text-[11px] text-muted-fg/40">All WA fees, taxes & amortization schedule</span>
     </button>`;
 
     h+=`</div>`;
