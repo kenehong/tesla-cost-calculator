@@ -1,10 +1,10 @@
-# Tesla Cost Calculator in WA
+# Tesla Finance Calculator in WA
 
-**The most accurate out-the-door cost estimator for buying a Tesla in Washington State.**
+**The most accurate finance calculator for purchasing a Tesla in Washington State.**
 
 No hidden fees. No surprises. Every WA-specific tax and fee included — from EV surcharges to Sound Transit RTA tax to the new luxury tax.
 
-![Tesla Cost Calculator in WA](.github/screenshots/dark.png)
+![Tesla Finance Calculator in WA](.github/screenshots/dark.png)
 
 ---
 
