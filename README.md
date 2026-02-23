@@ -5,7 +5,6 @@
 No hidden fees. No surprises. Every WA-specific tax and fee included — from EV surcharges to Sound Transit RTA tax to the new luxury tax.
 
 ![Tesla Cost Calculator in WA](.github/screenshots/dark.png)
-![Tesla Cost Calculator Detail](.github/screenshots/dark-detail.jpeg)
 
 ---
 
